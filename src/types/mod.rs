@@ -19,8 +19,11 @@ pub use headers::ZhtpHeaders;
 pub use request::ZhtpRequest;
 pub use response::ZhtpResponse;
 pub use access_policy::{AccessPolicy, TimeRestriction};
-pub use content::{ContentMetadata};
+pub use content::{ContentMetadata, ServerContent, EncryptionInfo, CompressionInfo, ContentChunk, ReplicationInfo};
 pub use economic::EconomicAssessment;
+
+// Types defined in this module are automatically available:
+// - StorageRequirements, StorageQuality, etc.
 
 use serde::{Deserialize, Serialize};
 
@@ -354,41 +357,8 @@ pub struct StorageSearchQuery {
     pub tags: Option<Vec<String>>,
 }
 
-/// Server content structure for internal use
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ServerContent {
-    /// Content identifier
-    pub id: String,
-    /// Content data
-    pub data: Vec<u8>,
-    /// Content metadata
-    pub metadata: ContentMetadata,
-    /// Access control settings
-    pub access_control: AccessPolicy,
-    /// Economic requirements
-    pub economic_data: Option<EconomicAssessment>,
-    /// Storage requirements
-    pub storage_requirements: StorageRequirements,
-}
-
-impl ServerContent {
-    /// Create ServerContent with metadata
-    pub fn with_metadata(
-        id: String,
-        data: Vec<u8>,
-        metadata: ContentMetadata,
-        access_control: AccessPolicy,
-    ) -> Self {
-        Self {
-            id,
-            data,
-            metadata,
-            access_control,
-            economic_data: None,
-            storage_requirements: StorageRequirements::default(),
-        }
-    }
-}
+// ServerContent moved to types/content.rs to avoid duplication
+// Use: use crate::types::content::ServerContent;
 
 /// Storage requirements for content
 #[derive(Debug, Clone, Serialize, Deserialize)]

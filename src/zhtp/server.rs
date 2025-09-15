@@ -654,8 +654,8 @@ async fn send_response(
 fn format_lib_response(response: &ZhtpResponse) -> ZhtpResult<Vec<u8>> {
     let mut result = Vec::new();
     
-    // Status line
-    let status_line = format!("ZHTP/1.0 {} {}\r\n", 
+    // Status line - Use HTTP/1.1 for compatibility with standard HTTP clients
+    let status_line = format!("HTTP/1.1 {} {}\r\n", 
         response.status.code(), 
         response.status.reason_phrase()
     );
@@ -675,8 +675,16 @@ fn format_lib_response(response: &ZhtpResponse) -> ZhtpResult<Vec<u8>> {
     
     // Server header
     if !response.headers.contains_key("Server") {
-        let server_header = format!("Server: ZHTP/1.0\r\n");
+        let server_header = format!("Server: ZHTP/1.0 (HTTP/1.1 Compatible)\r\n");
         result.extend_from_slice(server_header.as_bytes());
+    }
+    
+    // Add standard HTTP headers for compatibility
+    if !response.headers.contains_key("Connection") {
+        result.extend_from_slice(b"Connection: close\r\n");
+    }
+    if !response.headers.contains_key("Content-Type") {
+        result.extend_from_slice(b"Content-Type: application/json\r\n");
     }
     
     // Date header

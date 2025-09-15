@@ -15,8 +15,8 @@ use std::collections::HashMap;
 
 // Use proper ZK types from lib-proofs module
 use lib_proofs::{
-    ZkProof, ZkTransactionProver, TransactionVerifier, 
-    VerificationResult, ZkTransactionProof, initialize_zk_system
+    ZkProof, ZkTransactionProof, TransactionVerifier,
+    types::VerificationResult, initialize_zk_system
 };
 
 /// ZHTP cryptographic context
@@ -157,7 +157,7 @@ impl ZhtpCrypto {
         if let Ok(mut verifier) = TransactionVerifier::new() {
             // Try to interpret as transaction proof
             if let Ok(tx_proof) = serde_json::from_slice::<ZkTransactionProof>(proof_data) {
-                match ZkTransactionProver::verify_transaction(&tx_proof) {
+                match ZkTransactionProof::verify_transaction(&tx_proof) {
                     Ok(is_valid) => return Ok(is_valid),
                     Err(e) => {
                         tracing::debug!("Transaction proof verification failed: {}", e);

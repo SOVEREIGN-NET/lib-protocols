@@ -259,6 +259,32 @@ pub struct EconomicStats {
 pub mod utils {
     use super::*;
 
+    /// Calculate request value for DAO fee calculation (moved from types/request.rs to avoid duplication)
+    pub fn calculate_request_value(method: &crate::types::ZhtpMethod, body: &[u8], uri: &str) -> u64 {
+        match method {
+            crate::types::ZhtpMethod::Post | crate::types::ZhtpMethod::Put | crate::types::ZhtpMethod::Patch => {
+                // For content creation/modification, use content size as value
+                body.len() as u64 * 10 // 10 tokens per byte for content operations
+            }
+            crate::types::ZhtpMethod::Get | crate::types::ZhtpMethod::Head => {
+                // For content retrieval, use base value plus URI complexity
+                100 + (uri.len() as u64 / 10) // Base 100 tokens + URI complexity
+            }
+            crate::types::ZhtpMethod::Delete => {
+                // Deletion operations have medium cost
+                200 + (uri.len() as u64 / 5) // Base 200 tokens + URI complexity
+            }
+            crate::types::ZhtpMethod::Verify => {
+                // Verification operations have lower cost
+                50 + (uri.len() as u64 / 20) // Base 50 tokens + URI complexity
+            }
+            _ => {
+                // Other operations use header value or default
+                50 + (uri.len() as u64 / 10) // Minimum 50 tokens + URI complexity
+            }
+        }
+    }
+
     /// Calculate dynamic fee based on network load
     pub fn calculate_dynamic_fee(base_fee: u64, network_load: f64) -> u64 {
         if network_load > 0.8 {
@@ -336,11 +362,13 @@ mod tests {
 
     #[test]
     fn test_dao_fee_validation() {
-        let config = EconomicConfig::default();
+        let mut config = EconomicConfig::default();
+        config.dao_fee_percentage = 2.0; // 2% DAO fee
         let economics = ZhtpEconomics::new(config).unwrap();
         
-        // Valid payment
-        assert!(economics.validate_dao_fee_payment(100, 100, b"proof").is_ok());
+        // Valid payment with proper proof
+        let payment_proof = b"valid_payment_proof_hash_12345678901234567890";
+        assert!(economics.validate_dao_fee_payment(2, 100, payment_proof).is_ok());
         
         // Insufficient payment
         assert!(economics.validate_dao_fee_payment(100, 50, b"proof").is_err());

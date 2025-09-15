@@ -16,7 +16,7 @@ use lib_blockchain::{get_shared_blockchain};
 use lib_crypto::verify_signature;
 use anyhow::{Context, Result as AnyhowResult};
 use uuid::Uuid;
-use base64;
+use base64::{Engine as _, engine::general_purpose};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(Debug, Deserialize)]
@@ -136,7 +136,7 @@ impl SecureWalletTransferHandler {
             }
         };
 
-        let provided_public_key = match base64::decode(&request.public_key) {
+        let provided_public_key = match general_purpose::STANDARD.decode(&request.public_key) {
             Ok(bytes) => bytes,
             Err(_) => {
                 return Ok(SecureTransferResponse {
@@ -153,7 +153,7 @@ impl SecureWalletTransferHandler {
             }
         };
 
-        let transaction_data = match base64::decode(&request.signed_transaction) {
+        let transaction_data = match general_purpose::STANDARD.decode(&request.signed_transaction) {
             Ok(bytes) => bytes,
             Err(_) => {
                 return Ok(SecureTransferResponse {
@@ -229,17 +229,17 @@ impl SecureWalletTransferHandler {
             .as_secs();
 
         ZhtpResponse {
+            version: "ZHTP/1.0".to_string(),
             status,
             headers: ZhtpHeaders::new(),
             body: body.into_bytes(),
-            server: "ZHTP/1.0".to_string(),
+            server: None,  // No specific server identity for this response
             status_message: match status {
                 ZhtpStatus::Ok => "OK".to_string(),
                 ZhtpStatus::BadRequest => "Bad Request".to_string(),
                 _ => "Unknown".to_string(),
             },
             timestamp,
-            version: None,
             validity_proof: None,
         }
     }

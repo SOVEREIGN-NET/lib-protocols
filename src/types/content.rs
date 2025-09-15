@@ -8,11 +8,13 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use lib_storage::types::ContentHash;
 use lib_proofs::ZeroKnowledgeProof;
 use lib_identity::IdentityId;
-use crate::types::AccessPolicy;
+use crate::types::{AccessPolicy, EconomicAssessment, StorageRequirements};
 
 /// Content hosted by ZHTP server
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ServerContent {
+    /// Content identifier (merged from types/mod.rs)
+    pub id: Option<String>,
     /// Content data (may be encrypted)
     pub data: Vec<u8>,
     /// Content metadata
@@ -23,6 +25,10 @@ pub struct ServerContent {
     pub validity_proof: ZeroKnowledgeProof,
     /// Access control policy for this content
     pub access_policy: AccessPolicy,
+    /// Economic requirements (merged from types/mod.rs)
+    pub economic_data: Option<EconomicAssessment>,
+    /// Storage requirements (merged from types/mod.rs)
+    pub storage_requirements: Option<StorageRequirements>,
     /// Content encryption status
     pub encryption_info: Option<EncryptionInfo>,
     /// Content compression info
@@ -313,11 +319,14 @@ impl ServerContent {
         let validity_proof = ZeroKnowledgeProof::default();
 
         Ok(Self {
+            id: None, // Will be set when stored
             data,
             metadata,
             hash,
             validity_proof,
             access_policy,
+            economic_data: None,
+            storage_requirements: None,
             encryption_info: None,
             compression_info: None,
             chunks: None,
@@ -335,11 +344,40 @@ impl ServerContent {
         let validity_proof = ZeroKnowledgeProof::default();
 
         Ok(Self {
+            id: None, // Will be set when stored
             data,
             metadata,
             hash,
             validity_proof,
             access_policy,
+            economic_data: None,
+            storage_requirements: None,
+            encryption_info: None,
+            compression_info: None,
+            chunks: None,
+            replication_info: None,
+        })
+    }
+
+    /// Create ServerContent with metadata (merged from types/mod.rs)
+    pub fn with_id_and_metadata(
+        id: String,
+        data: Vec<u8>,
+        metadata: ContentMetadata,
+        access_control: AccessPolicy,
+    ) -> anyhow::Result<Self> {
+        let hash = ContentHash::from_bytes(&lib_crypto::hash_blake3(&data));
+        let validity_proof = ZeroKnowledgeProof::default();
+
+        Ok(Self {
+            id: Some(id),
+            data,
+            metadata,
+            hash,
+            validity_proof,
+            access_policy: access_control,
+            economic_data: None,
+            storage_requirements: Some(StorageRequirements::default()),
             encryption_info: None,
             compression_info: None,
             chunks: None,

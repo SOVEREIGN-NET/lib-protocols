@@ -90,7 +90,6 @@
 // Re-export all public types and modules
 pub mod types;
 pub mod zhtp;
-pub mod api;
 pub mod handlers;
 pub mod validation;
 pub mod secure_transfer;
@@ -100,7 +99,6 @@ pub mod zdns;
 pub mod identity;
 pub mod crypto;
 pub mod economics;
-pub mod mesh;
 pub mod storage;
 pub mod integration;
 
@@ -125,13 +123,7 @@ pub use types::{
 pub use zhtp::{ZhtpServer, ServerConfig};
 pub use zdns::{ZdnsServer, ZdnsConfig, ZdnsRecord, ZdnsRecordType, ZdnsQuery, ZdnsResponse};
 
-// Re-export API modules
-pub use api::{
-    ApiEndpoints, ApiConfig, ApiContext, ApiTier,
-    WalletOperationRequest, WalletOperation,
-    DaoOperationRequest, DaoOperation, VoteChoice,
-    IdentityRequest, IdentityVerificationType,
-};
+// API modules moved to zhtp crate - no longer exported from lib-protocols
 
 // Re-export handler functions
 pub use handlers::{
@@ -149,7 +141,6 @@ pub use validation::{
 // Re-export integration modules
 pub use crypto::{ZhtpCrypto, CryptoConfig};
 pub use economics::{ZhtpEconomics, EconomicConfig, EconomicAssessment, EconomicStats};
-pub use mesh::{MeshManager, MeshConfig, MeshNode, RoutingPath, MeshStats};
 pub use storage::{StorageIntegration, StorageConfig, StorageContract, StorageStats};
 pub use identity::{ProtocolIdentityService, IdentityServiceConfig, IdentitySession, IdentityAuthRequest, IdentityAuthResponse};
 pub use integration::{ZhtpIntegration, IntegrationConfig, IntegrationStats};

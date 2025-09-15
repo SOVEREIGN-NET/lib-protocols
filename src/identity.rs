@@ -644,9 +644,8 @@ impl ZkCredentialExt for ZkCredential {
             issuer,
             subject,
             proof,
-            token.as_bytes().to_vec(),           // claim
             Some(current_time + 3600),           // expires_at (1 hour expiration)
-            Vec::new(),                          // metadata
+            token.as_bytes().to_vec(),           // metadata (token data)
         ))
     }
 }

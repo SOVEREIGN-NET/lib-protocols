@@ -373,11 +373,14 @@ impl ContentManager {
         // Create server content using proper constructor
         let access_policy = AccessPolicy::public(); // Default access policy
         let server_content = ServerContent::with_metadata(
-            content_id.clone(),
             final_content,
             metadata.clone(),
             access_policy,
-        );
+        )?;
+        
+        // Set the content ID after creation
+        let mut server_content = server_content;
+        server_content.id = Some(content_id.clone());
         
         // Store metadata
         let chunks_len = chunks.len();
@@ -409,9 +412,11 @@ impl ContentManager {
         // Initialize statistics
         self.stats_store.insert(content_id.clone(), ContentStats::default());
         
-        // Create replicas if needed - check storage_requirements instead of replication_info
-        if server_content.storage_requirements.replication > 1 {
-            self.create_replicas(&content_id, &ReplicationStrategy::NReplicas(server_content.storage_requirements.replication)).await?;
+        // Create replicas if needed - check storage_requirements
+        if let Some(ref storage_req) = server_content.storage_requirements {
+            if storage_req.replication > 1 {
+                self.create_replicas(&content_id, &ReplicationStrategy::NReplicas(storage_req.replication)).await?;
+            }
         }
         
         tracing::info!("💾 Content stored: {} ({} bytes, {} chunks)",
@@ -849,6 +854,9 @@ mod tests {
             popularity_metrics: None,
             economic_info: None,
             privacy_level: 100,
+            hash: lib_storage::types::ContentHash::from_bytes(&lib_crypto::hash_blake3(content)),
+            encryption_info: None,
+            compression_info: None,
             integrity_checksum: None,
             related_content: vec![],
             source_attribution: None,
@@ -914,7 +922,7 @@ mod tests {
         let config = ContentConfig::default();
         let manager = ContentManager::new(config);
         
-        let content_size = 1024; // 1KB
+        const CONTENT_SIZE: usize = 1024; // 1KB
         let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
         
         let metadata = ContentMetadata {
@@ -923,7 +931,7 @@ mod tests {
             language: None,
             last_modified: now,
             created_at: now,
-            size: content_size as u64,
+            size: CONTENT_SIZE as u64,
             version: None,
             tags: vec![],
             author: None,
@@ -936,6 +944,9 @@ mod tests {
             popularity_metrics: None,
             economic_info: None,
             privacy_level: 100,
+            hash: lib_storage::types::ContentHash::from_bytes(&lib_crypto::hash_blake3(&[0u8; CONTENT_SIZE])),
+            encryption_info: None,
+            compression_info: None,
             integrity_checksum: None,
             related_content: vec![],
             source_attribution: None,
@@ -956,7 +967,7 @@ mod tests {
             &economic_model,
         ).unwrap();
         
-        let assessment = manager.calculate_storage_fees(content_size, &metadata, &request).unwrap();
+        let assessment = manager.calculate_storage_fees(CONTENT_SIZE, &metadata, &request).unwrap();
         assert!(assessment.total_fees > 0);
         assert!(assessment.dao_fees > 0);
         assert!(assessment.ubi_contribution > 0);

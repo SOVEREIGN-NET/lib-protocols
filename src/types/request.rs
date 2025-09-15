@@ -47,11 +47,11 @@ impl ZhtpRequest {
             .as_secs();
         
         // Calculate request value for DAO fee based on method and content
-        let request_value = Self::calculate_request_value(&method, &body, &uri);
+        let request_value = crate::economics::utils::calculate_request_value(&method, &body, &uri);
         
         // Calculate fees using economic model
         let tx_size = body.len() as u64 + uri.len() as u64;
-        let (network_fee, dao_fee, total_fees) = economic_model.calculate_fee(tx_size, request_value, priority);
+        let (network_fee, dao_fee, _total_fees) = economic_model.calculate_fee(tx_size, request_value, priority);
         
         // Generate DAO fee proof for UBI funding validation
         let dao_fee_proof = hash_blake3(&format!("lib_dao_fee_{}_{}", dao_fee, timestamp).as_bytes());
@@ -203,9 +203,9 @@ impl ZhtpRequest {
     }
 
     /// Validate ZHTP request includes mandatory DAO fee for UBI/welfare funding
-    pub fn validate_dao_fee(&self, economic_model: &EconomicModel) -> anyhow::Result<bool> {
+    pub fn validate_dao_fee(&self, _economic_model: &EconomicModel) -> anyhow::Result<bool> {
         // Calculate expected DAO fee based on request value
-        let request_value = Self::calculate_request_value(&self.method, &self.body, &self.uri);
+        let request_value = crate::economics::utils::calculate_request_value(&self.method, &self.body, &self.uri);
         
         // Calculate expected DAO fee (2% of request value)
         let expected_dao_fee = (request_value * DAO_FEE_PERCENTAGE) / 10000; // 2.00%
@@ -348,32 +348,6 @@ impl ZhtpRequest {
         self.headers.access_requirements.is_some() ||
         self.headers.required_reputation.is_some()
     }
-
-    /// Calculate request value for DAO fee calculation
-    fn calculate_request_value(method: &ZhtpMethod, body: &[u8], uri: &str) -> u64 {
-        match method {
-            ZhtpMethod::Post | ZhtpMethod::Put | ZhtpMethod::Patch => {
-                // For content creation/modification, use content size as value
-                body.len() as u64 * 10 // 10 tokens per byte for content operations
-            }
-            ZhtpMethod::Get | ZhtpMethod::Head => {
-                // For content retrieval, use base value plus URI complexity
-                100 + (uri.len() as u64 / 10) // Base 100 tokens + URI complexity
-            }
-            ZhtpMethod::Delete => {
-                // Deletion operations have medium cost
-                200 + (uri.len() as u64 / 5) // Base 200 tokens + URI complexity
-            }
-            ZhtpMethod::Verify => {
-                // Verification operations have lower cost
-                50 + (uri.len() as u64 / 20) // Base 50 tokens + URI complexity
-            }
-            _ => {
-                // Other operations use header value or default
-                50 + (uri.len() as u64 / 10) // Minimum 50 tokens + URI complexity
-            }
-        }
-    }
 }
 
 #[cfg(test)]
@@ -475,13 +449,15 @@ mod tests {
 
     #[test]
     fn test_request_value_calculation() {
+        use crate::economics::utils::calculate_request_value;
+        
         assert_eq!(
-            ZhtpRequest::calculate_request_value(&ZhtpMethod::Get, &[], "/test"),
+            calculate_request_value(&ZhtpMethod::Get, &[], "/test"),
             100 + ("/test".len() as u64 / 10)
         );
         
         assert_eq!(
-            ZhtpRequest::calculate_request_value(&ZhtpMethod::Post, b"data", "/test"),
+            calculate_request_value(&ZhtpMethod::Post, b"data", "/test"),
             4 * 10 // 4 bytes * 10 tokens per byte
         );
     }

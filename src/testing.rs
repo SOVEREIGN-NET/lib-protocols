@@ -309,13 +309,14 @@ pub mod fixtures {
         parameters.insert("token_type".to_string(), "ZHTP".to_string());
         parameters.insert("network".to_string(), "mainnet".to_string());
         
-        let wallet_op = crate::api::WalletOperationRequest {
-            operation: crate::api::WalletOperation::GetBalance,
-            wallet_address: "0x1234567890abcdef".to_string(),
-            amount: None,
-            recipient: None,
-            parameters,
-        };
+        // Create a simple test wallet operation (API types moved to zhtp)
+        let wallet_op = serde_json::json!({
+            "operation": "GetBalance",
+            "wallet_address": "0x1234567890abcdef",
+            "amount": null,
+            "recipient": null,
+            "parameters": parameters,
+        });
 
         TestRequestBuilder::new(ZhtpMethod::Post, "/api/wallet/operation")
             .json_body(&wallet_op)
@@ -328,13 +329,14 @@ pub mod fixtures {
         let mut parameters = std::collections::HashMap::new();
         parameters.insert("stake_amount".to_string(), "1000".to_string());
         
-        let dao_op = crate::api::DaoOperationRequest {
-            operation: crate::api::DaoOperation::Vote,
-            dao_id: "dao_123".to_string(),
-            proposal_id: Some("prop_123".to_string()),
-            vote: Some(crate::api::VoteChoice::Yes),
-            parameters,
-        };
+        // Create a simple test DAO operation (API types moved to zhtp)
+        let dao_op = serde_json::json!({
+            "operation": "Vote",
+            "dao_id": "dao_123",
+            "proposal_id": "prop_123",
+            "vote": "Yes",
+            "parameters": parameters,
+        });
 
         TestRequestBuilder::new(ZhtpMethod::Post, "/api/dao/operation")
             .json_body(&dao_op)
