@@ -164,7 +164,7 @@ impl ZhtpIntegration {
             let signature = lib_crypto::Signature {
                 signature: signature_bytes.to_vec(),
                 public_key: public_key.clone(),
-                algorithm: lib_crypto::SignatureAlgorithm::Ed25519,
+                algorithm: lib_crypto::SignatureAlgorithm::Dilithium2,
                 timestamp: chrono::Utc::now().timestamp() as u64,
             };
             
