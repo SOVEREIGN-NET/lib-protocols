@@ -217,21 +217,21 @@ impl ZhtpServer {
             return Err(anyhow::anyhow!("Server is already running"));
         }
         
-        tracing::info!("🚀 Starting ZHTP Server v{}", crate::zhtp::ZHTP_VERSION);
-        tracing::info!("📡 Server ID: {}", self.state.server_id);
-        tracing::info!("🌐 Binding to port {}", self.state.config.port);
+        tracing::info!(" Starting ZHTP Server v{}", crate::zhtp::ZHTP_VERSION);
+        tracing::info!("Server ID: {}", self.state.server_id);
+        tracing::info!("Binding to port {}", self.state.config.port);
         
         // Bind to address
         let addr = format!("{}:{}", self.state.config.host, self.state.config.port);
         let listener = TcpListener::bind(&addr).await
             .with_context(|| format!("Failed to bind to address {}", addr))?;
         
-        tracing::info!("🎯 ZHTP Server listening on {}", addr);
+        tracing::info!("ZHTP Server listening on {}", addr);
         
         // Notify event handlers
         for handler in &self.event_handlers {
             if let Err(e) = handler.on_start().await {
-                tracing::error!("❌ Event handler start error: {}", e);
+                tracing::error!("Event handler start error: {}", e);
             }
         }
         
@@ -250,14 +250,14 @@ impl ZhtpServer {
             return Ok(());
         }
         
-        tracing::info!("🛑 Stopping ZHTP Server");
+        tracing::info!("Stopping ZHTP Server");
         
         *self.is_running.write().unwrap() = false;
         
         // Notify event handlers
         for handler in &self.event_handlers {
             if let Err(e) = handler.on_stop().await {
-                tracing::error!("❌ Event handler stop error: {}", e);
+                tracing::error!("Event handler stop error: {}", e);
             }
         }
         
@@ -269,11 +269,11 @@ impl ZhtpServer {
         }
         
         if *self.state.active_connections.read().unwrap() > 0 {
-            tracing::warn!("⚠️ {} connections still active after shutdown", 
+            tracing::warn!("{} connections still active after shutdown", 
                          *self.state.active_connections.read().unwrap());
         }
         
-        tracing::info!("✅ ZHTP Server stopped");
+        tracing::info!("ZHTP Server stopped");
         Ok(())
     }
     
@@ -289,7 +289,7 @@ impl ZhtpServer {
             
             match listener.accept().await {
                 Ok((stream, addr)) => {
-                    tracing::debug!("📥 New connection from {}", addr);
+                    tracing::debug!("New connection from {}", addr);
                     
                     // Increment active connections
                     *self.state.active_connections.write().unwrap() += 1;
@@ -308,12 +308,12 @@ impl ZhtpServer {
                             middleware,
                             event_handlers,
                         ).await {
-                            tracing::error!("❌ Connection error: {}", e);
+                            tracing::error!("Connection error: {}", e);
                         }
                     });
                 }
                 Err(e) => {
-                    tracing::error!("❌ Failed to accept connection: {}", e);
+                    tracing::error!("Failed to accept connection: {}", e);
                     // Continue accepting connections despite errors
                 }
             }
@@ -344,7 +344,7 @@ async fn handle_connection(
             Ok(Ok(Some(req))) => req,
             Ok(Ok(None)) => break, // Connection closed gracefully
             Ok(Err(e)) => {
-                tracing::error!("❌ Request parsing error: {}", e);
+                tracing::error!("Request parsing error: {}", e);
                 let error_response = ZhtpResponse::error(
                     ZhtpStatus::BadRequest,
                     format!("Request parsing error: {}", e),
@@ -372,14 +372,14 @@ async fn handle_connection(
         // Notify event handlers
         for handler in &event_handlers {
             if let Err(e) = handler.on_request(&request).await {
-                tracing::error!("❌ Event handler request error: {}", e);
+                tracing::error!("Event handler request error: {}", e);
             }
         }
         
         // Process middleware (before request)
         for mw in &middleware {
             if let Err(e) = mw.before_request(&mut request).await {
-                tracing::error!("❌ Middleware before_request error: {}", e);
+                tracing::error!("Middleware before_request error: {}", e);
                 let error_response = ZhtpResponse::error(
                     ZhtpStatus::InternalServerError,
                     "Middleware error".to_string(),
@@ -389,33 +389,61 @@ async fn handle_connection(
             }
         }
         
-        // Find appropriate handler
+        // Handle CORS preflight OPTIONS requests
         let mut response = None;
-        for handler in &handlers {
-            if handler.can_handle(&request) {
-                match handler.handle_request(request.clone()).await {
-                    Ok(resp) => {
-                        response = Some(resp);
-                        break;
-                    }
-                    Err(e) => {
-                        tracing::error!("❌ Handler error: {}", e);
-                        
-                        // Try middleware error handlers
-                        for mw in &middleware {
-                            if let Ok(Some(error_resp)) = mw.on_error(&e).await {
-                                response = Some(error_resp);
-                                break;
+        if request.method == ZhtpMethod::Options {
+            let mut cors_headers = ZhtpHeaders::new();
+            cors_headers.set("Access-Control-Allow-Origin", "*".to_string());
+            cors_headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS".to_string());
+            cors_headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Peer-Address".to_string());
+            cors_headers.set("Access-Control-Max-Age", "86400".to_string());
+            cors_headers.set("Content-Length", "0".to_string());
+            
+            let timestamp = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_secs();
+            
+            response = Some(ZhtpResponse {
+                version: crate::types::ZHTP_VERSION.to_string(),
+                status: ZhtpStatus::Ok,
+                status_message: "OK".to_string(),
+                headers: cors_headers,
+                body: Vec::new(),
+                timestamp,
+                server: None,
+                validity_proof: None,
+            });
+        }
+        
+        // Find appropriate handler if not OPTIONS
+        if response.is_none() {
+            for handler in &handlers {
+                if handler.can_handle(&request) {
+                    match handler.handle_request(request.clone()).await {
+                        Ok(resp) => {
+                            response = Some(resp);
+                            break;
+                        }
+                        Err(e) => {
+                            tracing::error!("Handler error: {}", e);
+                            
+                            // Try middleware error handlers
+                            for mw in &middleware {
+                                if let Ok(Some(error_resp)) = mw.on_error(&e).await {
+                                    response = Some(error_resp);
+                                    break;
+                                }
                             }
+                            
+                            if response.is_none() {
+                                response = Some(ZhtpResponse::error(
+                                    ZhtpStatus::InternalServerError,
+                                    format!("Handler error: {}", e),
+                                ));
+                            }
+                            break;
                         }
-                        
-                        if response.is_none() {
-                            response = Some(ZhtpResponse::error(
-                                ZhtpStatus::InternalServerError,
-                                format!("Handler error: {}", e),
-                            ));
-                        }
-                        break;
                     }
                 }
             }
@@ -432,13 +460,13 @@ async fn handle_connection(
         // Process middleware (after response)
         for mw in &middleware {
             if let Err(e) = mw.after_response(&mut final_response).await {
-                tracing::error!("❌ Middleware after_response error: {}", e);
+                tracing::error!("Middleware after_response error: {}", e);
             }
         }
         
         // Send response
         if let Err(e) = send_response(&mut stream, &final_response, &state).await {
-            tracing::error!("❌ Failed to send response: {}", e);
+            tracing::error!("Failed to send response: {}", e);
             break;
         }
         
@@ -451,7 +479,7 @@ async fn handle_connection(
         // Notify event handlers
         for handler in &event_handlers {
             if let Err(e) = handler.on_response(&final_response).await {
-                tracing::error!("❌ Event handler response error: {}", e);
+                tracing::error!("Event handler response error: {}", e);
             }
         }
         
@@ -685,6 +713,20 @@ fn format_lib_response(response: &ZhtpResponse) -> ZhtpResult<Vec<u8>> {
     }
     if !response.headers.contains_key("Content-Type") {
         result.extend_from_slice(b"Content-Type: application/json\r\n");
+    }
+    
+    // Add CORS headers for browser integration
+    if !response.headers.contains_key("Access-Control-Allow-Origin") {
+        result.extend_from_slice(b"Access-Control-Allow-Origin: *\r\n");
+    }
+    if !response.headers.contains_key("Access-Control-Allow-Methods") {
+        result.extend_from_slice(b"Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS\r\n");
+    }
+    if !response.headers.contains_key("Access-Control-Allow-Headers") {
+        result.extend_from_slice(b"Access-Control-Allow-Headers: Content-Type, Authorization, X-Peer-Address\r\n");
+    }
+    if !response.headers.contains_key("Access-Control-Max-Age") {
+        result.extend_from_slice(b"Access-Control-Max-Age: 86400\r\n");
     }
     
     // Date header

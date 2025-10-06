@@ -219,19 +219,19 @@ impl ZhtpRequest {
         
         if !dao_fee_valid {
             tracing::warn!(
-                "❌ ZHTP request rejected: insufficient DAO fee. Expected: {}, Provided: {}",
+                "ZHTP request rejected: insufficient DAO fee. Expected: {}, Provided: {}",
                 expected_dao_fee, self.headers.dao_fee
             );
             return Ok(false);
         }
         
         if !proof_valid {
-            tracing::warn!("❌ ZHTP request rejected: missing DAO fee proof");
+            tracing::warn!("ZHTP request rejected: missing DAO fee proof");
             return Ok(false);
         }
         
         tracing::info!(
-            "✅ ZHTP request validated: {} ZHTP DAO fee paid for UBI/welfare funding",
+            "ZHTP request validated: {} ZHTP DAO fee paid for UBI/welfare funding",
             self.headers.dao_fee
         );
         
@@ -242,7 +242,7 @@ impl ZhtpRequest {
     pub fn validate_size_limits(&self) -> anyhow::Result<bool> {
         if self.body.len() > crate::types::MAX_REQUEST_SIZE {
             tracing::warn!(
-                "❌ ZHTP request rejected: body too large. Size: {}, Max: {}",
+                "ZHTP request rejected: body too large. Size: {}, Max: {}",
                 self.body.len(),
                 crate::types::MAX_REQUEST_SIZE
             );
@@ -253,7 +253,7 @@ impl ZhtpRequest {
         let header_size = serde_json::to_string(&self.headers)?.len();
         if header_size > crate::types::MAX_HEADER_SIZE {
             tracing::warn!(
-                "❌ ZHTP request rejected: headers too large. Size: {}, Max: {}",
+                "ZHTP request rejected: headers too large. Size: {}, Max: {}",
                 header_size,
                 crate::types::MAX_HEADER_SIZE
             );
@@ -273,7 +273,7 @@ impl ZhtpRequest {
         
         if age > max_age_seconds {
             tracing::warn!(
-                "❌ ZHTP request rejected: timestamp too old. Age: {}s, Max: {}s",
+                "ZHTP request rejected: timestamp too old. Age: {}s, Max: {}s",
                 age, max_age_seconds
             );
             return Ok(false);
@@ -281,7 +281,7 @@ impl ZhtpRequest {
 
         if self.timestamp > now + 300 { // Allow 5 minutes clock skew
             tracing::warn!(
-                "❌ ZHTP request rejected: timestamp in future. Skew: {}s",
+                "ZHTP request rejected: timestamp in future. Skew: {}s",
                 self.timestamp - now
             );
             return Ok(false);

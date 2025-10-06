@@ -47,6 +47,16 @@ pub enum ZdnsRecordType {
     MULTISIG,
     /// Post-quantum signature record
     PQS,
+    /// Web4 domain registry record
+    WEB4,
+    /// Web4 content mapping record
+    WEB4CONTENT,
+    /// Web4 ownership verification record
+    WEB4OWNER,
+    /// Web4 DHT node record
+    WEB4DHT,
+    /// Web4 mesh endpoint record
+    WEB4MESH,
 }
 
 /// ZDNS record with zero-knowledge proofs
@@ -715,6 +725,407 @@ impl Default for ZdnsConfig {
                 enable_isp_bypass: true,
             },
         }
+    }
+}
+
+/// Web4 ZDNS Integration Module
+/// 
+/// Provides seamless integration between Web4 domain registry and ZDNS system
+pub mod web4_integration {
+    use super::*;
+    use lib_proofs::ZeroKnowledgeProof;
+    
+    /// Web4 ZDNS bridge for domain resolution integration
+    pub struct Web4ZdnsBridge {
+        /// ZDNS server instance
+        zdns_server: std::sync::Arc<ZdnsServer>,
+    }
+    
+    impl Web4ZdnsBridge {
+        /// Create new Web4 ZDNS bridge
+        pub fn new(zdns_server: std::sync::Arc<ZdnsServer>) -> Self {
+            Self { zdns_server }
+        }
+        
+        /// Register Web4 domain with ZDNS
+        pub async fn register_web4_domain(
+            &self,
+            domain: &str,
+            owner_id: &str,
+            ownership_proof: &ZeroKnowledgeProof,
+            content_mappings: &std::collections::HashMap<String, String>,
+            dht_nodes: &[String],
+        ) -> Result<()> {
+            tracing::info!("🌍 Registering Web4 domain {} with ZDNS", domain);
+            
+            // Create Web4 domain registry record
+            let web4_record = ZdnsRecord {
+                name: domain.to_string(),
+                record_type: ZdnsRecordType::WEB4,
+                value: serde_json::json!({
+                    "version": "1.0",
+                    "owner_id": owner_id,
+                    "registered_at": chrono::Utc::now(),
+                    "type": "web4_domain",
+                    "status": "active"
+                }).to_string(),
+                ttl: 3600, // 1 hour TTL
+                ownership_proof: hex::encode(&ownership_proof.proof_data),
+                pq_signature: hex::encode(&ownership_proof.verification_key),
+                dao_fee_proof: "web4_registration_fee".to_string(),
+                priority: None,
+                weight: None,
+                port: None,
+                target: None,
+                metadata: ZdnsRecordMetadata {
+                    created_at: chrono::Utc::now(),
+                    updated_at: chrono::Utc::now(),
+                    owner_id: owner_id.to_string(),
+                    version: 1,
+                    economic_config: Some(EconomicConfig {
+                        access_fee: 0.001,
+                        owner_share: 0.30,
+                        ubi_share: 0.40,
+                        network_share: 0.20,
+                        hosting_reward: 0.10,
+                    }),
+                    access_policy: Some("web4_public".to_string()),
+                    content_hash: None,
+                },
+            };
+            
+            // Register domain record
+            self.zdns_server.register_record(web4_record).await?;
+            
+            // Register ownership verification record
+            let owner_record = ZdnsRecord {
+                name: domain.to_string(),
+                record_type: ZdnsRecordType::WEB4OWNER,
+                value: serde_json::json!({
+                    "owner_id": owner_id,
+                    "verification_method": "zero_knowledge_proof",
+                    "proof_type": ownership_proof.proof_system,
+                    "verified_at": chrono::Utc::now()
+                }).to_string(),
+                ttl: 7200, // 2 hour TTL for ownership records
+                ownership_proof: hex::encode(&ownership_proof.proof_data),
+                pq_signature: hex::encode(&ownership_proof.verification_key),
+                dao_fee_proof: "web4_owner_verification".to_string(),
+                priority: None,
+                weight: None,
+                port: None,
+                target: None,
+                metadata: ZdnsRecordMetadata {
+                    created_at: chrono::Utc::now(),
+                    updated_at: chrono::Utc::now(),
+                    owner_id: owner_id.to_string(),
+                    version: 1,
+                    economic_config: None,
+                    access_policy: Some("web4_owner_only".to_string()),
+                    content_hash: None,
+                },
+            };
+            
+            self.zdns_server.register_record(owner_record).await?;
+            
+            // Register content mapping records
+            for (path, content_hash) in content_mappings {
+                let content_record = ZdnsRecord {
+                    name: format!("{}{}", domain, path),
+                    record_type: ZdnsRecordType::WEB4CONTENT,
+                    value: content_hash.clone(),
+                    ttl: 1800, // 30 minutes TTL for content
+                    ownership_proof: hex::encode(&ownership_proof.proof_data),
+                    pq_signature: hex::encode(&ownership_proof.verification_key),
+                    dao_fee_proof: "web4_content_mapping".to_string(),
+                    priority: None,
+                    weight: None,
+                    port: None,
+                    target: None,
+                    metadata: ZdnsRecordMetadata {
+                        created_at: chrono::Utc::now(),
+                        updated_at: chrono::Utc::now(),
+                        owner_id: owner_id.to_string(),
+                        version: 1,
+                        economic_config: None,
+                        access_policy: Some("web4_public".to_string()),
+                        content_hash: Some(content_hash.clone()),
+                    },
+                };
+                
+                self.zdns_server.register_record(content_record).await?;
+            }
+            
+            // Register DHT node records
+            for (i, dht_node) in dht_nodes.iter().enumerate() {
+                let dht_record = ZdnsRecord {
+                    name: domain.to_string(),
+                    record_type: ZdnsRecordType::WEB4DHT,
+                    value: dht_node.clone(),
+                    ttl: 900, // 15 minutes TTL for DHT nodes
+                    ownership_proof: hex::encode(&ownership_proof.proof_data),
+                    pq_signature: hex::encode(&ownership_proof.verification_key),
+                    dao_fee_proof: "web4_dht_node".to_string(),
+                    priority: Some((i as u16) + 1), // Priority based on order
+                    weight: Some(100),
+                    port: Some(9333), // Default ZHTP port
+                    target: Some(dht_node.clone()),
+                    metadata: ZdnsRecordMetadata {
+                        created_at: chrono::Utc::now(),
+                        updated_at: chrono::Utc::now(),
+                        owner_id: owner_id.to_string(),
+                        version: 1,
+                        economic_config: None,
+                        access_policy: Some("web4_public".to_string()),
+                        content_hash: None,
+                    },
+                };
+                
+                self.zdns_server.register_record(dht_record).await?;
+            }
+            
+            tracing::info!("Web4 domain {} registered with ZDNS successfully", domain);
+            Ok(())
+        }
+        
+        /// Resolve Web4 domain to get DHT nodes and content mappings
+        pub async fn resolve_web4_domain(&self, domain: &str) -> Result<Web4DomainResolution> {
+            tracing::info!("Resolving Web4 domain {} through ZDNS", domain);
+            
+            // Query for Web4 domain record
+            let domain_query = ZdnsQuery {
+                name: domain.to_string(),
+                record_type: ZdnsRecordType::WEB4,
+                class: 1, // IN class
+                id: rand::random(),
+                recursion_desired: true,
+                dnssec_ok: true,
+                query_proof: None,
+                dao_fee: Some(0.001),
+                client_id: None,
+            };
+            
+            let domain_response = self.zdns_server.process_query(domain_query).await?;
+            
+            if domain_response.answers.is_empty() {
+                return Err(ProtocolError::InvalidRequest(format!("Web4 domain not found: {}", domain)));
+            }
+            
+            // Query for DHT nodes
+            let dht_query = ZdnsQuery {
+                name: domain.to_string(),
+                record_type: ZdnsRecordType::WEB4DHT,
+                class: 1,
+                id: rand::random(),
+                recursion_desired: true,
+                dnssec_ok: true,
+                query_proof: None,
+                dao_fee: Some(0.001),
+                client_id: None,
+            };
+            
+            let dht_response = self.zdns_server.process_query(dht_query).await?;
+            
+            // Query for ownership info
+            let owner_query = ZdnsQuery {
+                name: domain.to_string(),
+                record_type: ZdnsRecordType::WEB4OWNER,
+                class: 1,
+                id: rand::random(),
+                recursion_desired: true,
+                dnssec_ok: true,
+                query_proof: None,
+                dao_fee: Some(0.001),
+                client_id: None,
+            };
+            
+            let owner_response = self.zdns_server.process_query(owner_query).await?;
+            
+            // Parse results
+            let domain_info: serde_json::Value = serde_json::from_str(&domain_response.answers[0].value)
+                .map_err(|e| ProtocolError::InvalidRequest(format!("Invalid domain record: {}", e)))?;
+            
+            let dht_nodes: Vec<String> = dht_response.answers
+                .iter()
+                .map(|record| record.value.clone())
+                .collect();
+            
+            let owner_id = if !owner_response.answers.is_empty() {
+                let owner_info: serde_json::Value = serde_json::from_str(&owner_response.answers[0].value)
+                    .unwrap_or_default();
+                owner_info.get("owner_id").and_then(|v| v.as_str()).unwrap_or("unknown").to_string()
+            } else {
+                "unknown".to_string()
+            };
+            
+            let dht_nodes_len = dht_nodes.len();
+            
+            let resolution = Web4DomainResolution {
+                domain: domain.to_string(),
+                found: true,
+                owner_id,
+                dht_nodes,
+                content_mappings: HashMap::new(), // Will be populated by separate queries
+                status: domain_info.get("status").and_then(|v| v.as_str()).unwrap_or("unknown").to_string(),
+                registered_at: domain_info.get("registered_at").and_then(|v| v.as_str())
+                    .and_then(|s| chrono::DateTime::parse_from_rfc3339(s).ok())
+                    .map(|dt| dt.with_timezone(&chrono::Utc))
+                    .unwrap_or_else(chrono::Utc::now),
+            };
+            
+            tracing::info!("Web4 domain {} resolved: {} DHT nodes found", domain, dht_nodes_len);
+            Ok(resolution)
+        }
+        
+        /// Resolve Web4 content path to content hash
+        pub async fn resolve_web4_content(&self, domain: &str, path: &str) -> Result<Option<String>> {
+            let full_name = format!("{}{}", domain, path);
+            
+            let content_query = ZdnsQuery {
+                name: full_name.clone(),
+                record_type: ZdnsRecordType::WEB4CONTENT,
+                class: 1,
+                id: rand::random(),
+                recursion_desired: true,
+                dnssec_ok: true,
+                query_proof: None,
+                dao_fee: Some(0.001),
+                client_id: None,
+            };
+            
+            match self.zdns_server.process_query(content_query).await {
+                Ok(response) => {
+                    if !response.answers.is_empty() {
+                        tracing::info!("Web4 content resolved: {}{} -> {}", domain, path, response.answers[0].value);
+                        Ok(Some(response.answers[0].value.clone()))
+                    } else {
+                        Ok(None)
+                    }
+                }
+                Err(_) => Ok(None),
+            }
+        }
+        
+        /// Update Web4 domain content mappings
+        pub async fn update_web4_content(
+            &self,
+            domain: &str,
+            path: &str,
+            content_hash: &str,
+            owner_id: &str,
+            ownership_proof: &ZeroKnowledgeProof,
+        ) -> Result<()> {
+            let full_name = format!("{}{}", domain, path);
+            
+            let content_record = ZdnsRecord {
+                name: full_name,
+                record_type: ZdnsRecordType::WEB4CONTENT,
+                value: content_hash.to_string(),
+                ttl: 1800, // 30 minutes TTL
+                ownership_proof: hex::encode(&ownership_proof.proof_data),
+                pq_signature: hex::encode(&ownership_proof.verification_key),
+                dao_fee_proof: "web4_content_update".to_string(),
+                priority: None,
+                weight: None,
+                port: None,
+                target: None,
+                metadata: ZdnsRecordMetadata {
+                    created_at: chrono::Utc::now(),
+                    updated_at: chrono::Utc::now(),
+                    owner_id: owner_id.to_string(),
+                    version: 1,
+                    economic_config: None,
+                    access_policy: Some("web4_public".to_string()),
+                    content_hash: Some(content_hash.to_string()),
+                },
+            };
+            
+            self.zdns_server.update_record(content_record).await?;
+            
+            tracing::info!("Web4 content updated: {}{} -> {}", domain, path, content_hash);
+            Ok(())
+        }
+        
+        /// Delete Web4 domain from ZDNS
+        pub async fn delete_web4_domain(&self, domain: &str, owner_id: &str) -> Result<()> {
+            // Delete all Web4-related records for the domain
+            let record_types = vec![
+                ZdnsRecordType::WEB4,
+                ZdnsRecordType::WEB4OWNER,
+                ZdnsRecordType::WEB4DHT,
+            ];
+            
+            for record_type in record_types {
+                if let Err(e) = self.zdns_server.delete_record(domain, &record_type, owner_id).await {
+                    tracing::warn!("Failed to delete {:?} record for {}: {}", record_type, domain, e);
+                }
+            }
+            
+            tracing::info!("Web4 domain {} deleted from ZDNS", domain);
+            Ok(())
+        }
+    }
+    
+    /// Web4 domain resolution result
+    #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+    pub struct Web4DomainResolution {
+        /// Domain name
+        pub domain: String,
+        /// Whether domain was found
+        pub found: bool,
+        /// Domain owner ID
+        pub owner_id: String,
+        /// Available DHT nodes for the domain
+        pub dht_nodes: Vec<String>,
+        /// Content path mappings
+        pub content_mappings: HashMap<String, String>,
+        /// Domain status
+        pub status: String,
+        /// Registration timestamp
+        pub registered_at: chrono::DateTime<chrono::Utc>,
+    }
+    
+    /// Create Web4 ZDNS bridge instance
+    pub async fn create_web4_zdns_bridge() -> Result<Web4ZdnsBridge> {
+        // Create ZDNS server configuration
+        let zdns_config = ZdnsConfig {
+            port: 5353, // Standard DNS port
+            node_id: "web4-zdns-bridge".to_string(),
+            max_query_time: 30,
+            cache_config: CacheConfig {
+                enabled: true,
+                max_size: 10000,
+                default_ttl: 3600,
+                cleanup_interval: 300,
+                distributed: true,
+            },
+            economic_config: EconomicConfig {
+                access_fee: 0.001,
+                owner_share: 0.30,
+                ubi_share: 0.40,
+                network_share: 0.20,
+                hosting_reward: 0.10,
+            },
+            security_config: SecurityConfig {
+                require_zk_proofs: true,
+                require_dao_fees: true,
+                enable_pq_signatures: true,
+                max_query_rate: 1000,
+                enable_query_logging: true,
+            },
+            mesh_config: MeshConfig {
+                enabled: true,
+                max_hops: 8,
+                node_selection: MeshNodeSelection::LoadBalance,
+                routing_rewards: 0.01,
+                enable_isp_bypass: true,
+            },
+        };
+        
+        let zdns_server = std::sync::Arc::new(ZdnsServer::new(zdns_config));
+        
+        tracing::info!("🌍 Web4 ZDNS bridge initialized");
+        Ok(Web4ZdnsBridge::new(zdns_server))
     }
 }
 

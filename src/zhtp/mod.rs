@@ -26,7 +26,7 @@ use crate::types::{ZhtpRequest, ZhtpResponse, ZhtpStatus};
 pub const ZHTP_VERSION: &str = "1.0";
 
 /// Default ZHTP port
-pub const DEFAULT_ZHTP_PORT: u16 = 8080;
+pub const DEFAULT_ZHTP_PORT: u16 = 9333;
 
 /// Maximum request size (16MB)
 pub const MAX_REQUEST_SIZE: usize = 16 * 1024 * 1024;
@@ -190,11 +190,11 @@ impl ServerCapabilities {
 
 /// Initialize ZHTP protocol subsystem
 pub async fn initialize() -> ZhtpResult<()> {
-    tracing::info!("🚀 Initializing ZHTP v{} Protocol", ZHTP_VERSION);
-    tracing::info!("📡 Zero Knowledge Hypertext Transfer Protocol Ready");
-    tracing::info!("🔐 Post-quantum cryptography enabled");
-    tracing::info!("💰 DAO fee system active");
-    tracing::info!("🌐 ISP bypass capabilities ready");
+    tracing::info!(" Initializing ZHTP v{} Protocol", ZHTP_VERSION);
+    tracing::info!("Zero Knowledge Hypertext Transfer Protocol Ready");
+    tracing::info!("Post-quantum cryptography enabled");
+    tracing::info!("DAO fee system active");
+    tracing::info!("ISP bypass capabilities ready");
     Ok(())
 }
 
@@ -227,7 +227,7 @@ mod tests {
     #[test]
     fn test_constants() {
         assert_eq!(ZHTP_VERSION, "1.0");
-        assert_eq!(DEFAULT_ZHTP_PORT, 8080);
+        assert_eq!(DEFAULT_ZHTP_PORT, 9333);
         assert_eq!(MAX_REQUEST_SIZE, 16 * 1024 * 1024);
     }
 

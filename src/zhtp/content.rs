@@ -440,7 +440,7 @@ impl ContentManager {
                     .as_secs();
                 
                 if current_time < *expiry {
-                    tracing::debug!("🎯 Content cache hit: {}", content_id);
+                    tracing::debug!("Content cache hit: {}", content_id);
                     let cached_content_clone = cached_content.clone();
                     self.update_access_stats(content_id, request).await?;
                     return Ok(Some(cached_content_clone));
@@ -559,7 +559,7 @@ impl ContentManager {
         
         self.metadata_store.insert(content_id.to_string(), updated_metadata);
         
-        tracing::info!("📝 Content updated: {} (version {})", content_id, new_version_number);
+        tracing::info!("Content updated: {} (version {})", content_id, new_version_number);
         
         Ok(new_version.version_id)
     }
@@ -747,13 +747,13 @@ impl ContentManager {
     
     async fn distribute_retrieval_incentives(&mut self, content_id: &str, assessment: &EconomicAssessment) -> ZhtpResult<()> {
         // Simplified incentive distribution
-        tracing::debug!("💰 Distributing retrieval incentives for {}: {} wei", content_id, assessment.total_fees);
+        tracing::debug!("Distributing retrieval incentives for {}: {} wei", content_id, assessment.total_fees);
         Ok(())
     }
     
     async fn create_replicas(&mut self, content_id: &str, strategy: &ReplicationStrategy) -> ZhtpResult<()> {
         // Simplified replication implementation
-        tracing::debug!("🔄 Creating replicas for {} with strategy {:?}", content_id, strategy);
+        tracing::debug!(" Creating replicas for {} with strategy {:?}", content_id, strategy);
         Ok(())
     }
     

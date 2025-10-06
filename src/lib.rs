@@ -119,7 +119,7 @@ pub use types::{
 };
 
 pub use zhtp::{ZhtpServer, ServerConfig};
-pub use zdns::{ZdnsServer, ZdnsConfig, ZdnsRecord, ZdnsRecordType, ZdnsQuery, ZdnsResponse};
+pub use zdns::{ZdnsServer, ZdnsConfig, ZdnsRecord, ZdnsRecordType, ZdnsQuery, ZdnsResponse, web4_integration};
 
 // API modules moved to zhtp crate - no longer exported from lib-protocols
 
@@ -195,11 +195,11 @@ pub type ProtocolResult<T> = anyhow::Result<T>;
 
 /// Initialize the ZHTP protocol system
 pub async fn initialize() -> ProtocolResult<()> {
-    tracing::info!("🚀 Initializing ZHTP Protocol Stack v{}", ZHTP_VERSION);
-    tracing::info!("🌐 Web4 Internet Infrastructure Ready");
-    tracing::info!("💰 DAO fee system active for UBI funding");
-    tracing::info!("🔐 Post-quantum cryptography enabled");
-    tracing::info!("🕸️ Mesh networking ready for ISP bypass");
+    tracing::info!(" Initializing ZHTP Protocol Stack v{}", ZHTP_VERSION);
+    tracing::info!("Web4 Internet Infrastructure Ready");
+    tracing::info!("DAO fee system active for UBI funding");
+    tracing::info!("Post-quantum cryptography enabled");
+    tracing::info!("Mesh networking ready for ISP bypass");
     Ok(())
 }
 

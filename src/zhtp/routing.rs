@@ -415,7 +415,7 @@ impl Router {
         }
         
         let routing_time = start_time.elapsed();
-        tracing::debug!("🔍 Route matching took {:?}", routing_time);
+        tracing::debug!("Route matching took {:?}", routing_time);
         
         Ok(route_match)
     }
@@ -943,7 +943,7 @@ impl Router {
         performance.total_dao_fees += dao_fee;
         performance.avg_dao_fee = performance.total_dao_fees as f64 / performance.request_count as f64;
         
-        tracing::info!("💰 Economic routing: {} -> {} (fee: {} wei, score: {})",
+        tracing::info!("Economic routing: {} -> {} (fee: {} wei, score: {})",
                       request.uri,
                       route_match.route.metadata.name,
                       dao_fee,

@@ -504,7 +504,7 @@ impl SessionManager {
         // Distribute economic incentives
         self.distribute_session_incentives(&session_id, &economic_assessment).await?;
         
-        tracing::info!("🔐 Session created: {} for user {} (security level: {:?})",
+        tracing::info!("Session created: {} for user {} (security level: {:?})",
                       session_id, request.user_id, auth_result.security_level);
         
         Ok(session_info)
@@ -636,7 +636,7 @@ impl SessionManager {
         // Distribute renewal incentives
         self.distribute_session_incentives(session_id, &renewal_assessment).await?;
         
-        tracing::info!("🔄 Session renewed: {} (new expiration: {})", session_id, new_expiration);
+        tracing::info!(" Session renewed: {} (new expiration: {})", session_id, new_expiration);
         
         Ok(session_clone)
     }
@@ -668,7 +668,7 @@ impl SessionManager {
         // Remove session
         self.sessions.remove(session_id);
         
-        tracing::info!("🛑 Session terminated: {} (reason: {})", session_id, reason);
+        tracing::info!("Session terminated: {} (reason: {})", session_id, reason);
         
         Ok(true)
     }
@@ -823,7 +823,7 @@ impl SessionManager {
     
     async fn distribute_session_incentives(&self, session_id: &str, assessment: &EconomicAssessment) -> ZhtpResult<()> {
         // Simplified incentive distribution
-        tracing::debug!("💰 Distributing session incentives for {}: {} wei", session_id, assessment.total_fees);
+        tracing::debug!("Distributing session incentives for {}: {} wei", session_id, assessment.total_fees);
         Ok(())
     }
 }

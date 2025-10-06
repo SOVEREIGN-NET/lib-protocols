@@ -310,7 +310,7 @@ impl ZhtpHandlers {
     
     /// Handle GET requests
     pub async fn handle_get(&self, request: ZhtpRequest) -> ZhtpResult<ZhtpResponse> {
-        tracing::debug!("🔍 Handling GET request: {}", request.uri);
+        tracing::debug!("Handling GET request: {}", request.uri);
         
         // API endpoints are now handled by zhtp orchestrator
         if request.uri.starts_with("/api/") {
@@ -344,7 +344,7 @@ impl ZhtpHandlers {
     
     /// Handle POST requests
     pub async fn handle_post(&self, mut request: ZhtpRequest) -> ZhtpResult<ZhtpResponse> {
-        tracing::debug!("📝 Handling POST request: {}", request.uri);
+        tracing::debug!("Handling POST request: {}", request.uri);
         
         // Validate request size
         if request.body.len() > self.config.max_content_size {
@@ -396,7 +396,7 @@ impl ZhtpHandlers {
     
     /// Handle PUT requests
     pub async fn handle_put(&self, request: ZhtpRequest) -> ZhtpResult<ZhtpResponse> {
-        tracing::debug!("✏️ Handling PUT request: {}", request.uri);
+        tracing::debug!("Handling PUT request: {}", request.uri);
         
         // Validate request size
         if request.body.len() > self.config.max_content_size {
@@ -427,7 +427,7 @@ impl ZhtpHandlers {
     
     /// Handle PATCH requests
     pub async fn handle_patch(&self, request: ZhtpRequest) -> ZhtpResult<ZhtpResponse> {
-        tracing::debug!("🔧 Handling PATCH request: {}", request.uri);
+        tracing::debug!("Handling PATCH request: {}", request.uri);
         
         // API endpoints are now handled by zhtp orchestrator
         if request.uri.starts_with("/api/") {
@@ -450,7 +450,7 @@ impl ZhtpHandlers {
     
     /// Handle DELETE requests
     pub async fn handle_delete(&self, request: ZhtpRequest) -> ZhtpResult<ZhtpResponse> {
-        tracing::debug!("🗑️ Handling DELETE request: {}", request.uri);
+        tracing::debug!("Handling DELETE request: {}", request.uri);
         
         // API endpoints are now handled by zhtp orchestrator
         if request.uri.starts_with("/api/") {
@@ -486,7 +486,7 @@ impl ZhtpHandlers {
     
     /// Handle OPTIONS requests
     pub async fn handle_options(&self, request: ZhtpRequest) -> ZhtpResult<ZhtpResponse> {
-        tracing::debug!("⚙️ Handling OPTIONS request: {}", request.uri);
+        tracing::debug!("Handling OPTIONS request: {}", request.uri);
         
         let mut response = ZhtpResponse::success(Vec::new(), None);
         
@@ -505,7 +505,7 @@ impl ZhtpHandlers {
     
     /// Handle VERIFY requests (ZHTP-specific)
     pub async fn handle_verify(&self, request: ZhtpRequest) -> ZhtpResult<ZhtpResponse> {
-        tracing::debug!("🔐 Handling VERIFY request: {}", request.uri);
+        tracing::debug!("Handling VERIFY request: {}", request.uri);
         
         // Extract verification data from request
         let verification_type = request.headers.get("X-Verification-Type")
@@ -1050,7 +1050,7 @@ impl ZhtpHandlers {
             if let Some(zk_proof_header) = request.headers.get("X-ZK-Proof") {
                 // Simple validation - just check it's not empty and reasonable length
                 if zk_proof_header.len() >= 32 {
-                    tracing::debug!("✅ ZK proof validation passed (test mode)");
+                    tracing::debug!("ZK proof validation passed (test mode)");
                     return Ok(None);
                 } else {
                     return Ok(Some(ZhtpResponse::error(
@@ -1077,7 +1077,7 @@ impl ZhtpHandlers {
                         // Use lib-proofs verification system
                         return match self.verify_zk_proof_with_lib_proofs(&zk_proof, request).await {
                             Ok(verification_result) if verification_result.is_valid() => {
-                                tracing::debug!("✅ ZK proof verified successfully with lib-proofs");
+                                tracing::debug!("ZK proof verified successfully with lib-proofs");
                                 self.update_zk_verification_stats().await;
                                 Ok(None) // Proof valid, continue processing
                             }
@@ -1090,7 +1090,7 @@ impl ZhtpHandlers {
                                 )))
                             }
                             Err(e) => {
-                                tracing::error!("❌ ZK proof verification error: {}", e);
+                                tracing::error!("ZK proof verification error: {}", e);
                                 Ok(Some(ZhtpResponse::error(
                                     ZhtpStatus::BadRequest,
                                     format!("ZK proof verification error: {}", e),
@@ -1124,7 +1124,7 @@ impl ZhtpHandlers {
 
             match crypto.verify_zk_proof(&proof_bytes, &public_inputs) {
                 Ok(true) => {
-                    tracing::debug!("✅ ZK proof verified successfully");
+                    tracing::debug!("ZK proof verified successfully");
                     self.update_zk_verification_stats().await;
                 }
                 Ok(false) => {
@@ -1134,7 +1134,7 @@ impl ZhtpHandlers {
                     )));
                 }
                 Err(e) => {
-                    tracing::error!("❌ ZK proof verification error: {}", e);
+                    tracing::error!("ZK proof verification error: {}", e);
                     return Ok(Some(ZhtpResponse::error(
                         ZhtpStatus::BadRequest,
                         format!("ZK proof verification error: {}", e),
@@ -1215,7 +1215,7 @@ impl ZhtpHandlers {
     /// Update ZK verification statistics
     async fn update_zk_verification_stats(&self) {
         // This would update server statistics for ZK proof verification
-        tracing::debug!("📊 Updated ZK verification statistics");
+        tracing::debug!("Updated ZK verification statistics");
     }
     
     // Verification methods
@@ -1282,7 +1282,7 @@ impl ZhtpHandlers {
 
     /// Handle CONNECT requests - establish persistent connection
     pub async fn handle_connect(&self, request: ZhtpRequest) -> ZhtpResult<ZhtpResponse> {
-        tracing::debug!("🔗 Handling CONNECT request: {}", request.uri);
+        tracing::debug!("Handling CONNECT request: {}", request.uri);
         
         // CONNECT method is used to establish a persistent connection to a server
         // For ZHTP, this could be used for mesh node connections or WebSocket upgrades
@@ -1310,7 +1310,7 @@ impl ZhtpHandlers {
 
     /// Handle TRACE requests - debug routing and mesh network
     pub async fn handle_trace(&self, request: ZhtpRequest) -> ZhtpResult<ZhtpResponse> {
-        tracing::debug!("🕵️ Handling TRACE request: {}", request.uri);
+        tracing::debug!("Handling TRACE request: {}", request.uri);
         
         // TRACE method returns diagnostic information about the request path
         // For ZHTP, this includes mesh routing information and node capabilities
@@ -1552,7 +1552,7 @@ impl ZhtpHandlers {
                     content_hash_bytes
                 ) {
                     Ok(proof) => {
-                        tracing::debug!("✅ Generated ZK validity proof for content {}", content_id);
+                        tracing::debug!("Generated ZK validity proof for content {}", content_id);
                         let proof_bytes = serde_json::to_vec(&proof).map_err(|e| anyhow::anyhow!("Proof serialization failed: {}", e))?;
                         return Ok(ZkContentProof {
                             proof: proof_bytes,
@@ -1563,7 +1563,7 @@ impl ZhtpHandlers {
                         });
                     }
                     Err(e) => {
-                        tracing::debug!("⚠️ ZK proof generation failed: {}, using fallback", e);
+                        tracing::debug!("ZK proof generation failed: {}, using fallback", e);
                     }
                 }
         }

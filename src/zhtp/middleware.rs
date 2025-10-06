@@ -179,7 +179,7 @@ impl ZhtpMiddleware for CorsMiddleware {
             "true".to_string(),
         );
         
-        tracing::debug!("🌐 CORS middleware: Processing request from origin: {}",
+        tracing::debug!("CORS middleware: Processing request from origin: {}",
                         request.headers.get("Origin").unwrap_or("unknown".to_string()));
         Ok(())
     }
@@ -274,7 +274,7 @@ impl ZhtpMiddleware for AuthenticationMiddleware {
                 if self.verify_zk_proof(&zk_proof).await? {
                     authenticated = true;
                     auth_method_used = "zk_proof".to_string();
-                    tracing::info!("🔐 ZK proof authentication successful");
+                    tracing::info!("ZK proof authentication successful");
                 }
             }
         }
@@ -285,7 +285,7 @@ impl ZhtpMiddleware for AuthenticationMiddleware {
                 if self.verify_signature(request, &signature).await? {
                     authenticated = true;
                     auth_method_used = "signature".to_string();
-                    tracing::info!("🔐 Signature authentication successful");
+                    tracing::info!("Signature authentication successful");
                 }
             }
         }
@@ -298,7 +298,7 @@ impl ZhtpMiddleware for AuthenticationMiddleware {
                     if self.verify_jwt(token).await? {
                         authenticated = true;
                         auth_method_used = "jwt".to_string();
-                        tracing::info!("🔐 JWT authentication successful");
+                        tracing::info!("JWT authentication successful");
                     }
                 }
             }
@@ -437,7 +437,7 @@ impl ZhtpMiddleware for EconomicMiddleware {
         request.headers.set("X-Economic-Impact", impact_score.to_string());
         request.headers.set("X-Economic-Validated", "true".to_string());
         
-        tracing::info!("💰 Economic validation: fee={} wei, UBI={} wei, impact={}",
+        tracing::info!("Economic validation: fee={} wei, UBI={} wei, impact={}",
                       dao_fee, ubi_allocation, impact_score);
         
         Ok(())
@@ -866,7 +866,7 @@ impl LoggingMiddleware {
 impl ZhtpMiddleware for LoggingMiddleware {
     async fn before_request(&self, request: &mut ZhtpRequest) -> ZhtpResult<()> {
         if self.log_requests {
-            let mut log_msg = format!("📨 Request: {} {}", request.method as u8, request.uri);
+            let mut log_msg = format!("Request: {} {}", request.method as u8, request.uri);
             
             if self.log_request_bodies && !request.body.is_empty() {
                 let body_preview = if request.body.len() <= self.max_body_log_size {
@@ -919,7 +919,7 @@ impl ZhtpMiddleware for LoggingMiddleware {
     }
     
     async fn on_error(&self, error: &anyhow::Error) -> ZhtpResult<Option<ZhtpResponse>> {
-        tracing::error!("❌ Middleware error: {}", error);
+        tracing::error!("Middleware error: {}", error);
         Ok(None)
     }
 }

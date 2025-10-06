@@ -69,7 +69,7 @@ impl SecureWalletTransferHandler {
         match verify_signature(transaction_data, &signature_bytes, provided_public_key) {
             Ok(is_valid) => Ok(is_valid),
             Err(e) => {
-                eprintln!("🔐 Signature verification failed: {}", e);
+                eprintln!("Signature verification failed: {}", e);
                 Ok(false)
             }
         }
@@ -77,7 +77,7 @@ impl SecureWalletTransferHandler {
 
     /// Handle secure wallet transfer with proper cryptographic verification
     async fn handle_secure_transfer(&self, request: SecureTransferRequest) -> ZhtpResult<SecureTransferResponse> {
-        println!("🔐 Processing secure transfer request from {}", request.from);
+        println!("Processing secure transfer request from {}", request.from);
 
         // Step 1: Get shared blockchain instance
         let blockchain_arc = get_shared_blockchain().await
@@ -179,7 +179,7 @@ impl SecureWalletTransferHandler {
         ).await {
             Ok(valid) => valid,
             Err(e) => {
-                println!("🔐 Signature verification error: {}", e);
+                println!("Signature verification error: {}", e);
                 false
             }
         };
@@ -207,7 +207,7 @@ impl SecureWalletTransferHandler {
         // For now, just simulate transaction processing
         let transaction_id = format!("tx_{}", Uuid::new_v4().to_string()[..8].to_lowercase());
         
-        println!("✅ Secure transfer verified and processed: {}", transaction_id);
+        println!("Secure transfer verified and processed: {}", transaction_id);
 
         Ok(SecureTransferResponse {
             success: true,
@@ -296,12 +296,12 @@ impl ZhtpRequestHandler for SecureWalletTransferHandler {
 // Test function to demonstrate the secure transfer process
 #[cfg(test)]
 pub fn demo_secure_transfer() {
-    println!("🔐 Secure Transfer Handler initialized");
-    println!("✅ Ready to process client-signed transactions");
+    println!("Secure Transfer Handler initialized");
+    println!("Ready to process client-signed transactions");
     
     let _handler = SecureWalletTransferHandler::new();
     
-    println!("📋 Security Features:");
+    println!("Security Features:");
     println!("   • Client-side transaction signing");
     println!("   • Server-side signature verification");
     println!("   • Identity verification against blockchain");

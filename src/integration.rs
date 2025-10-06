@@ -503,7 +503,7 @@ impl ZhtpIntegration {
         self.stats.blockchain_interactions += 1;
         
         // Log transaction for auditing
-        tracing::info!("📝 Blockchain transaction recorded: {} -> {}, amount: {}, DAO fee: {}", 
+        tracing::info!("Blockchain transaction recorded: {} -> {}, amount: {}, DAO fee: {}", 
                       sender_hash, recipient_hash, economics_assessment.total_fee, economics_assessment.dao_fee);
         
         Ok(())
@@ -705,7 +705,7 @@ pub mod packages {
         let _blockchain = Blockchain::new()
             .map_err(|e| ProtocolError::InternalError(format!("Failed to initialize blockchain: {}", e)))?;
         
-        tracing::info!("✅ lib-blockchain integration initialized successfully");
+        tracing::info!("lib-blockchain integration initialized successfully");
         Ok(())
     }
 
@@ -727,7 +727,7 @@ pub mod packages {
             }
         }
         
-        tracing::info!("✅ lib-identity integration initialized successfully via package integration");
+        tracing::info!("lib-identity integration initialized successfully via package integration");
         Ok(())
     }
 
@@ -740,14 +740,14 @@ pub mod packages {
         let _consensus_engine = ConsensusEngine::new(lib_consensus::ConsensusConfig::default())
             .map_err(|e| ProtocolError::InternalError(format!("Failed to create consensus engine: {}", e)))?;
         
-        tracing::info!("✅ lib-consensus integration initialized successfully");
+        tracing::info!("lib-consensus integration initialized successfully");
         Ok(())
     }
 
     /// Initialize integration with lib-network package
     pub async fn init_network_integration() -> Result<()> {
         // Network integration is handled externally via lib-network
-        tracing::info!("✅ lib-network integration initialized successfully");
+        tracing::info!("lib-network integration initialized successfully");
         Ok(())
     }
 
