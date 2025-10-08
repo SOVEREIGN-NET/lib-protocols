@@ -774,7 +774,7 @@ impl Default for ZdnsConfig {
     fn default() -> Self {
         Self {
             resolvers: vec![
-                "zdns://bootstrap.zhtp.network".to_string(),
+                "zdns://127.0.0.1".to_string(),
             ],
             enable_caching: true,
             cache_ttl_seconds: 3600, // 1 hour
