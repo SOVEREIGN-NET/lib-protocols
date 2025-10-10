@@ -3,7 +3,7 @@
 //! Complete implementations of ZHTP (Zero Knowledge Hypertext Transfer Protocol),
 //! ZDNS (Zero Knowledge Domain Name System), and other Web4 protocols.
 //! 
-//! ## ⚡ ZHTP IS A NATIVE PROTOCOL - COMPLETE ISP REPLACEMENT ⚡
+//! ##  ZHTP IS A NATIVE PROTOCOL - COMPLETE ISP REPLACEMENT 
 //! 
 //! ZHTP is a completely new internet stack designed specifically for Web4:
 //! - Zero-knowledge proof validation at transport layer
