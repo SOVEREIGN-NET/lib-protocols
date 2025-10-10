@@ -1429,7 +1429,7 @@ impl ZhtpHandlers {
         let zk_system = initialize_zk_system()
             .map_err(|e| anyhow::anyhow!("Failed to initialize ZK system: {}", e))?;
 
-        // If this is a Plonky2 proof, use the real verifier
+        // If this is a Plonky2 proof, use the verifier
         if let Some(plonky2_proof) = &zk_proof.plonky2_proof {
             match zk_system.verify_transaction(plonky2_proof) {
                 Ok(is_valid) => {
@@ -1534,7 +1534,7 @@ impl ZhtpHandlers {
         
         let context_bytes = proof_context.to_string().into_bytes();
         
-        // Try to use lib-proofs for real proof generation
+        // Try to use lib-proofs for proof generation
         if let Ok(zk_system) = initialize_zk_system() {
             // Generate a simple validity proof using lib-proofs
             // Create some dummy transaction parameters for content validity proof

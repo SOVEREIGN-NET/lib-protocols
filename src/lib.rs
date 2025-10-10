@@ -1,4 +1,4 @@
-//! # ZHTP Protocols - Revolutionary Web4 Protocol Stack
+//! # ZHTP Protocols - Web4 Protocol Stack
 //! 
 //! Complete implementations of ZHTP (Zero Knowledge Hypertext Transfer Protocol),
 //! ZDNS (Zero Knowledge Domain Name System), and other Web4 protocols.
@@ -37,7 +37,7 @@
 //! ## Core Features
 //! 
 //! ### ZHTP v1.0 Protocol
-//! - Revolutionary HTTP replacement with built-in economics
+//! - HTTP replacement with built-in economics
 //! - Zero-knowledge proof validation
 //! - Post-quantum cryptography (CRYSTALS-Dilithium, CRYSTALS-Kyber)
 //! - Mandatory 2% DAO fees for UBI funding

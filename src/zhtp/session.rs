@@ -708,7 +708,7 @@ impl SessionManager {
         }
         
         if count > 0 {
-            tracing::info!("🧹 Cleaned up {} expired sessions", count);
+            tracing::info!(" Cleaned up {} expired sessions", count);
         }
         
         Ok(count)

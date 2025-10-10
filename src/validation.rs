@@ -564,7 +564,7 @@ impl ZhtpValidator {
                 // Generate public inputs from request
                 let public_inputs_hash = self.generate_public_inputs_from_request(request);
                 
-                // If this is a Plonky2 proof, use the real verifier
+                // If this is a Plonky2 proof, use the verifier
                 if let Some(plonky2_proof) = &zk_proof.plonky2_proof {
                     match zk_system.verify_transaction(plonky2_proof) {
                         Ok(is_valid) => {
@@ -729,7 +729,7 @@ impl ZhtpValidator {
         // Verify payment signature
         self.verify_payment_signature(request, &tx_id, fee_amount, proof_bytes)?;
 
-        // In a real implementation, this would query the blockchain
+        // In a implementation, this would query the blockchain
         // For now, validate proof structure
         self.validate_payment_proof_structure(proof_bytes)?;
 

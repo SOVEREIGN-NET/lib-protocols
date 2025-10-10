@@ -1,7 +1,7 @@
 //! ZHTP v1.0 Protocol Core - HTTP Replacement
 //! 
 //! Complete implementation of the Zero Knowledge Hypertext Transfer Protocol,
-//! designed as a revolutionary replacement for HTTP with built-in economic
+//! designed as a replacement for HTTP with built-in economic
 //! incentives, zero-knowledge privacy, and post-quantum security.
 
 pub mod server;

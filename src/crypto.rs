@@ -107,7 +107,7 @@ impl ZhtpCrypto {
             return Err(ProtocolError::ZkProofError("Proof data too short".to_string()));
         }
 
-        // Try to use the real lib-proofs verification system
+        // Try to use the lib-proofs verification system
         match self.verify_zk_proof_with_lib_proofs(proof_data, public_inputs) {
             Ok(valid) => Ok(valid),
             Err(e) => {
@@ -142,7 +142,7 @@ impl ZhtpCrypto {
             )
         };
 
-        // If this is a Plonky2 proof with the actual proof structure, use the real verifier
+        // If this is a Plonky2 proof with the actual proof structure, use the verifier
         if let Some(plonky2_proof) = &zk_proof.plonky2_proof {
             match zk_system.verify_transaction(plonky2_proof) {
                 Ok(is_valid) => return Ok(is_valid),

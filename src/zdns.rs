@@ -1,6 +1,6 @@
 //! ZDNS - Zero Knowledge Domain Name System
 //! 
-//! Revolutionary DNS replacement for Web4, providing decentralized domain name resolution
+//! DNS replacement for Web4, providing decentralized domain name resolution
 //! with zero-knowledge proofs, ownership verification, and post-quantum security.
 //! 
 //! ZDNS completely replaces traditional DNS with a system that:
@@ -756,7 +756,7 @@ pub mod web4_integration {
             content_mappings: &std::collections::HashMap<String, String>,
             dht_nodes: &[String],
         ) -> Result<()> {
-            tracing::info!("🌍 Registering Web4 domain {} with ZDNS", domain);
+            tracing::info!(" Registering Web4 domain {} with ZDNS", domain);
             
             // Create Web4 domain registry record
             let web4_record = ZdnsRecord {
@@ -1124,7 +1124,7 @@ pub mod web4_integration {
         
         let zdns_server = std::sync::Arc::new(ZdnsServer::new(zdns_config));
         
-        tracing::info!("🌍 Web4 ZDNS bridge initialized");
+        tracing::info!(" Web4 ZDNS bridge initialized");
         Ok(Web4ZdnsBridge::new(zdns_server))
     }
 }

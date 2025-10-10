@@ -630,7 +630,7 @@ impl ZkCredentialExt for ZkCredential {
         let issuer = Hash::from_bytes(&lib_crypto::hash_blake3(b"protocol_issuer"));
         let subject = Hash::from_bytes(&lib_crypto::hash_blake3(token.as_bytes()));
         
-        // Create a basic ZK proof structure (this would be replaced with real proof)
+        // Create a basic ZK proof structure (this would be replaced with proof)
         let proof = ZeroKnowledgeProof::new(
             "Bearer".to_string(),
             token.as_bytes().to_vec(),

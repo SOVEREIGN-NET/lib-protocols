@@ -1,6 +1,6 @@
 //! ZHTP Server Core Implementation
 //! 
-//! Complete ZHTP server implementation with real request processing,
+//! Complete ZHTP server implementation with request processing,
 //! economic validation, zero-knowledge proof verification, and
 //! comprehensive content serving capabilities.
 

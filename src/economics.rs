@@ -208,10 +208,10 @@ impl ZhtpEconomics {
 
     /// Get economic statistics
     pub fn get_economic_stats(&self) -> EconomicStats {
-        // Use lib-economy for real fee tracking
+        // Use lib-economy for fee tracking
         use lib_identity::wallets::WalletManager;
         
-        // In a real implementation, this would query the economic state
+        // In a implementation, this would query the economic state
         // For now, we'll use the economic model to provide estimates
         let base_fee = self.model.calculate_fee(1000, 1000, Priority::Normal).1; // Get network fee
         let dao_fee = (base_fee as f64 * self.config.dao_fee_percentage / 100.0) as u64;
@@ -220,7 +220,7 @@ impl ZhtpEconomics {
             total_fees_collected: base_fee * 100, // Estimate based on activity
             dao_fees_collected: dao_fee * 100,
             ubi_distributed: (dao_fee * 80) / 100, // 80% of DAO fees for UBI
-            active_participants: 1000, // Would be tracked in real system
+            active_participants: 1000, // Would be tracked in system
             average_fee_per_operation: base_fee,
             dao_fee_percentage: self.config.dao_fee_percentage,
         }

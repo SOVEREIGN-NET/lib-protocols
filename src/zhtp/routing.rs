@@ -960,7 +960,7 @@ impl Router {
     /// Clear route cache
     pub fn clear_cache(&mut self) {
         self.route_cache.clear();
-        tracing::info!("🧹 Route cache cleared");
+        tracing::info!(" Route cache cleared");
     }
 }
 

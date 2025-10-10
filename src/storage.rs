@@ -1,6 +1,6 @@
 //! Storage Integration Module (Phase 3 Implementation)
 //! 
-//! Real integration with lib-storage package for distributed content management,
+//! integration with lib-storage package for distributed content management,
 //! economic storage, DHT networking, and identity migration.
 
 // Re-export storage types and functions
@@ -23,7 +23,7 @@ use lib_storage::{
 use lib_identity::{ZhtpIdentity, IdentityId};
 use lib_economy::EconomicModel;
 
-/// Storage integration for ZHTP protocols with real lib-storage backend
+/// Storage integration for ZHTP protocols with lib-storage backend
 #[derive(Debug)]
 pub struct StorageIntegration {
     /// Unified storage system from lib-storage
@@ -132,7 +132,7 @@ pub struct ZhtpStorageRequest {
 }
 
 impl StorageIntegration {
-    /// Create new storage integration with real lib-storage backend
+    /// Create new storage integration with lib-storage backend
     pub async fn new(config: StorageConfig) -> Result<Self> {
         // Create unified storage system configuration
         let storage_config = UnifiedStorageConfig {
@@ -177,7 +177,7 @@ impl StorageIntegration {
         })
     }
 
-    /// Store content using real lib-storage with economic validation
+    /// Store content using lib-storage with economic validation
     pub async fn store_content(
         &mut self,
         content: &[u8],
@@ -190,7 +190,7 @@ impl StorageIntegration {
         let (network_fee, dao_fee, total_fee) = self.economic_model.calculate_fee(storage_size, storage_size, lib_economy::types::Priority::Normal);
 
         // Validate payment capability (simplified for Phase 3)
-        let has_sufficient_funds = true; // TODO: Implement real wallet validation with uploader.wallet_manager
+        let has_sufficient_funds = true; // TODO: Implement wallet validation with uploader.wallet_manager
 
         if !has_sufficient_funds {
             return Err(ProtocolError::EconomicError("Insufficient funds for storage".to_string()));
@@ -239,7 +239,7 @@ impl StorageIntegration {
         Ok(content_hash.to_string())
     }
 
-    /// Retrieve content using real lib-storage with access control
+    /// Retrieve content using lib-storage with access control
     pub async fn retrieve_content(
         &mut self,
         content_id: &str,
@@ -347,7 +347,7 @@ impl StorageIntegration {
         }
     }
 
-    /// Search content using real lib-storage search capabilities
+    /// Search content using lib-storage search capabilities
     pub async fn search_content(
         &mut self,
         query: StorageSearchQuery,
@@ -457,7 +457,7 @@ impl StorageIntegration {
         _contract: &StorageContract,
         _content: &[u8],
     ) -> Result<()> {
-        // In a real implementation, this would:
+        // In a implementation, this would:
         // 1. Encrypt content if required
         // 2. Split content using erasure coding
         // 3. Send chunks to storage providers

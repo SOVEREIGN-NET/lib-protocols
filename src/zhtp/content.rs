@@ -337,7 +337,7 @@ impl ContentManager {
         // Check for deduplication
         if self.config.enable_deduplication {
             if let Some(existing_id) = self.dedup_hashes.get(&content_hash) {
-                tracing::info!("📎 Content deduplicated: using existing content {}", existing_id);
+                tracing::info!(" Content deduplicated: using existing content {}", existing_id);
                 return Ok(existing_id.clone());
             }
         }
@@ -419,7 +419,7 @@ impl ContentManager {
             }
         }
         
-        tracing::info!("💾 Content stored: {} ({} bytes, {} chunks)",
+        tracing::info!(" Content stored: {} ({} bytes, {} chunks)",
                       content_id, content.len(), chunks_len);
         
         Ok(content_id)
@@ -503,7 +503,7 @@ impl ContentManager {
         // Distribute economic incentives
         self.distribute_retrieval_incentives(content_id, &retrieval_assessment).await?;
         
-        tracing::info!("📤 Content retrieved: {} ({} bytes)", content_id, final_content.len());
+        tracing::info!(" Content retrieved: {} ({} bytes)", content_id, final_content.len());
         
         Ok(Some(final_content))
     }
@@ -693,7 +693,7 @@ impl ContentManager {
             let chunk_data = content[start..end].to_vec();
             self.chunk_data_store.insert(chunk.id.clone(), chunk_data);
         }
-        tracing::debug!("💾 Stored {} chunks for content {}", chunks.len(), content_id);
+        tracing::debug!(" Stored {} chunks for content {}", chunks.len(), content_id);
         Ok(())
     }
     

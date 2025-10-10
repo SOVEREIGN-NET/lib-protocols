@@ -73,7 +73,7 @@ pub struct ZhtpIntegration {
 impl ZhtpIntegration {
     /// Create new integrated system with all components initialized
     pub async fn new(config: IntegrationConfig) -> Result<Self> {
-        // Initialize all components with real implementations
+        // Initialize all components with implementations
         let crypto = ZhtpCrypto::new()?;
         let economics = ZhtpEconomics::new(crate::economics::EconomicConfig::default())?;
         
@@ -218,7 +218,7 @@ impl ZhtpIntegration {
         // Validate DAO fee payment if required
         if let Some(dao_fee_str) = request.headers.get("X-ZHTP-DAO-Fee") {
             if let Ok(dao_fee_amount) = dao_fee_str.parse::<f64>() {
-                // Simple validation - would be more complex in real implementation
+                // Simple validation - would be more complex in implementation
                 if dao_fee_amount < economics_assessment.dao_fee as f64 {
                     return Err(ProtocolError::DaoFeeError("Insufficient DAO fee".to_string()));
                 }
@@ -346,7 +346,7 @@ impl ZhtpIntegration {
                 // Retrieve content
                 let content_id = request.uri.trim_start_matches("/content/");
                 
-                // Authenticate request to get real identity
+                // Authenticate request to get identity
                 let authenticated_identity = self.identity_service.authenticate_request(&request).await?;
                 
                 match authenticated_identity {
@@ -409,7 +409,7 @@ impl ZhtpIntegration {
 
     /// Process blockchain integration
     async fn process_blockchain_integration(&mut self, request: &ZhtpRequest) -> Result<()> {
-        // Real integration with lib-blockchain package
+        // integration with lib-blockchain package
         use lib_blockchain::{Blockchain, transaction::Transaction, block::Block};
         
         // Initialize blockchain if not already done
@@ -456,7 +456,7 @@ impl ZhtpIntegration {
             }
         };
         
-        // Create transaction with real economic values using TransactionBuilder
+        // Create transaction with economic values using TransactionBuilder
         use lib_blockchain::transaction::{TransactionInput, TransactionOutput, creation::TransactionBuilder};
         use lib_blockchain::types::TransactionType;
         
@@ -496,7 +496,7 @@ impl ZhtpIntegration {
         if _demo_transaction_count >= 5 {
             let _pending_transactions = mempool.get_transactions_for_block(100, 1024000);
             
-            tracing::info!("📦 Processing {} demo transactions for blockchain integration", _demo_transaction_count);
+            tracing::info!(" Processing {} demo transactions for blockchain integration", _demo_transaction_count);
         }
         
         // Update blockchain state and statistics
@@ -511,7 +511,7 @@ impl ZhtpIntegration {
 
     /// Process identity integration
     async fn process_identity_integration(&mut self, request: &ZhtpRequest) -> Result<()> {
-        // Real integration with lib-identity package
+        // integration with lib-identity package
         
         // Authenticate the request to validate identity credentials
         let auth_result = self.identity_service.authenticate_request(request).await?;

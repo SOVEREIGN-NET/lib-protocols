@@ -573,7 +573,7 @@ impl ZhtpMiddleware for CompressionMiddleware {
                 request.body.len().to_string(),
             );
             
-            tracing::debug!("📦 Decompressed request body: {} -> {} bytes",
+            tracing::debug!(" Decompressed request body: {} -> {} bytes",
                            encoding, request.body.len());
         }
         
@@ -587,7 +587,7 @@ impl ZhtpMiddleware for CompressionMiddleware {
         }
         
         // Check if client accepts compression
-        // Note: In a real implementation, we'd check the Accept-Encoding header
+        // Note: In a implementation, we'd check the Accept-Encoding header
         // from the original request
         
         // Compress response body
@@ -615,7 +615,7 @@ impl ZhtpMiddleware for CompressionMiddleware {
                     response.body.len().to_string(),
                 );
                 
-                tracing::debug!("📦 Compressed response body with {}: {} bytes",
+                tracing::debug!(" Compressed response body with {}: {} bytes",
                                encoding, response.body.len());
             }
         }
@@ -897,7 +897,7 @@ impl ZhtpMiddleware for LoggingMiddleware {
     
     async fn after_response(&self, response: &mut ZhtpResponse) -> ZhtpResult<()> {
         if self.log_responses {
-            let mut log_msg = format!("📤 Response: {} {}", 
+            let mut log_msg = format!(" Response: {} {}", 
                                     response.status.code(), 
                                     response.status.reason_phrase());
             
