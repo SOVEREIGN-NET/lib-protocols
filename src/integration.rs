@@ -701,7 +701,8 @@ pub mod packages {
         // Initialize blockchain directly without package integration module
         use lib_blockchain::Blockchain;
         
-        // Initialize blockchain with default configuration
+        // Initialize blockchain with default configuration (Development network)
+        // Note: For production use, call Blockchain::new_for_network() with appropriate network
         let _blockchain = Blockchain::new()
             .map_err(|e| ProtocolError::InternalError(format!("Failed to initialize blockchain: {}", e)))?;
         
