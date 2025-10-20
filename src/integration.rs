@@ -332,6 +332,12 @@ impl ZhtpIntegration {
                         created_at: chrono::Utc::now().timestamp() as u64,
                         last_active: chrono::Utc::now().timestamp() as u64,
                         recovery_keys: vec![],
+                        owner_identity_id: None,  // Human users don't have owners
+                        reward_wallet_id: None,   // Users don't need this (nodes do)
+                        encrypted_master_seed: None,  // Not needed for ephemeral upload identities
+                        next_wallet_index: 0,
+                        password_hash: None,
+                        master_seed_phrase: None,
                     };
 
                     match self.storage.store_content(&request.body, metadata, uploader, request).await {
@@ -378,6 +384,12 @@ impl ZhtpIntegration {
                             created_at: chrono::Utc::now().timestamp() as u64,
                             last_active: chrono::Utc::now().timestamp() as u64,
                             recovery_keys: vec![],
+                            owner_identity_id: None,  // Human users don't have owners
+                            reward_wallet_id: None,   // Users don't need this (nodes do)
+                            encrypted_master_seed: None,  // Not needed for authenticated retrieval
+                            next_wallet_index: 0,
+                            password_hash: None,
+                            master_seed_phrase: None,
                         };
                         
                         match self.storage.retrieve_content(content_id, requester, request).await {
