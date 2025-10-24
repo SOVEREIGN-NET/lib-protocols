@@ -22,8 +22,8 @@ pub enum StorageBackend {
     FileSystem(PathBuf),
     /// In-memory storage (for testing)
     Memory,
-    /// Distributed IPFS storage
-    Ipfs(String),
+    /// Distributed storage
+    Distributed(String),
     /// S3-compatible storage
     S3 { bucket: String, region: String },
     /// Custom storage backend
@@ -622,8 +622,8 @@ impl ContentManager {
             StorageBackend::Memory => {
                 format!("memory://{}", content_id)
             }
-            StorageBackend::Ipfs(node) => {
-                format!("ipfs://{}/{}", node, content_id)
+            StorageBackend::Distributed(node) => {
+                format!("zhtp://{}/{}", node, content_id)
             }
             StorageBackend::S3 { bucket, region } => {
                 format!("s3://{}.{}/{}", bucket, region, content_id)

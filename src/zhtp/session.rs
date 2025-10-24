@@ -135,8 +135,8 @@ pub enum SessionStorage {
     DistributedHashTable,
     /// Blockchain storage (for permanent records)
     Blockchain,
-    /// IPFS storage
-    Ipfs(String), // node address
+    /// Mesh storage
+    Mesh(String), // node address
 }
 
 /// Session configuration
