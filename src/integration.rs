@@ -10,7 +10,9 @@ use crate::zhtp::{ZhtpResult, ZhtpRequestHandler};
 use lib_identity::{IdentityManager, identity::ZhtpIdentity, types::{IdentityId, AccessLevel}};
 use lib_economy::EconomicModel;
 use lib_storage::{UnifiedStorageSystem, types::ContentHash};
-use lib_blockchain::{get_shared_blockchain, Blockchain};
+// use lib_blockchain::get_shared_blockchain; // Removed - use zhtp::runtime::blockchain_provider instead
+use lib_blockchain::Blockchain;
+
 use lib_crypto::{Hash, PublicKey};
 use anyhow::anyhow;
 use serde::{Serialize, Deserialize};

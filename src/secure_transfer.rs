@@ -12,7 +12,8 @@ use crate::zhtp::{ZhtpResult, ZhtpRequestHandler};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use async_trait::async_trait;
-use lib_blockchain::{get_shared_blockchain};
+use lib_blockchain::{/* get_shared_blockchain - removed, use zhtp::runtime::blockchain_provider instead */};
+
 use lib_crypto::verify_signature;
 use anyhow::{Context, Result as AnyhowResult};
 use uuid::Uuid;
@@ -79,6 +80,11 @@ impl SecureWalletTransferHandler {
     async fn handle_secure_transfer(&self, request: SecureTransferRequest) -> ZhtpResult<SecureTransferResponse> {
         println!("Processing secure transfer request from {}", request.from);
 
+        // TODO: Blockchain access temporarily disabled - get_shared_blockchain removed
+        // This functionality needs to be moved to zhtp layer
+        return Err(anyhow::anyhow!("Secure transfers temporarily unavailable during blockchain provider refactor"));
+
+        /* DISABLED DURING REFACTOR
         // Step 1: Get shared blockchain instance
         let blockchain_arc = get_shared_blockchain().await
             .context("Failed to get shared blockchain")?;
@@ -220,6 +226,7 @@ impl SecureWalletTransferHandler {
                 transaction_processed: true,
             },
         })
+        */
     }
 
     fn create_response(&self, status: ZhtpStatus, body: String) -> ZhtpResponse {
