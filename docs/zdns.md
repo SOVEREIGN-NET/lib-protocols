@@ -14,7 +14,7 @@ This module implements ZDNS (Zero Knowledge Domain Name System), a DNS replaceme
 - Post-quantum security (CRYSTALS-Dilithium signatures)
 - Economic incentives for domain hosting
 - .zhtp domains and Web4 addressing
-- ISP bypass through mesh routing
+-  through mesh routing
 - DAO governance records and economic records
 
 ## Example Usage

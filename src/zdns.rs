@@ -8,7 +8,7 @@
 //! - Provides censorship-resistant domain resolution
 //! - Integrates economic incentives for domain hosting
 //! - Supports .zhtp domains and Web4 addressing
-//! - Enables ISP bypass through mesh routing
+//! - Enables  through mesh routing
 
 use crate::types::{ZhtpHeaders, ZhtpStatus};
 use crate::{ProtocolError, Result};
@@ -292,7 +292,7 @@ pub struct MeshConfig {
     pub node_selection: MeshNodeSelection,
     /// Economic incentives for mesh routing
     pub routing_rewards: f64,
-    /// Enable ISP bypass functionality
+    /// Enable  functionality
     pub enable_isp_bypass: bool,
 }
 

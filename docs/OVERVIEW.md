@@ -26,7 +26,7 @@ ZHTP replaces the entire traditional internet stack:
 - Zero-knowledge proof validation at transport layer
 - Post-quantum cryptography (CRYSTALS-Dilithium, CRYSTALS-Kyber)
 - Mandatory 2% DAO fees for UBI funding
-- Complete ISP bypass capability
+- Complete  capability
 - Native .zhtp domains and Web4 addressing
 
 #### ZDNS v1.0 System

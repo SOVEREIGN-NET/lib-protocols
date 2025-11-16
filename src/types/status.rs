@@ -101,7 +101,7 @@ pub enum ZhtpStatus {
     PeerNotFound = 801,
     /// Routing failed
     RoutingFailed = 802,
-    /// ISP bypass failed
+    ///  failed
     IspBypassFailed = 803,
     /// Network congestion
     NetworkCongestion = 804,
@@ -185,7 +185,7 @@ impl ZhtpStatus {
             ZhtpStatus::MeshUnavailable => "Mesh Network Unavailable",
             ZhtpStatus::PeerNotFound => "Peer Not Found",
             ZhtpStatus::RoutingFailed => "Routing Failed",
-            ZhtpStatus::IspBypassFailed => "ISP Bypass Failed",
+            ZhtpStatus::IspBypassFailed => " Failed",
             ZhtpStatus::NetworkCongestion => "Network Congestion",
             ZhtpStatus::BandwidthLimitExceeded => "Bandwidth Limit Exceeded",
 

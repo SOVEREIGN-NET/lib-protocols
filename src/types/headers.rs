@@ -110,7 +110,7 @@ pub struct ZhtpHeaders {
     pub mesh_path: Option<Vec<String>>,
     /// Mesh hop count
     pub mesh_hops: Option<u16>,
-    /// ISP bypass flag
+    ///  flag
     pub isp_bypass: Option<bool>,
     /// Preferred mesh peers
     pub preferred_peers: Option<Vec<String>>,
@@ -221,7 +221,7 @@ impl ZhtpHeaders {
             // Mesh network extensions
             mesh_path: None,
             mesh_hops: None,
-            isp_bypass: Some(true), // Enable ISP bypass by default
+            isp_bypass: Some(true), // Enable  by default
             preferred_peers: None,
             latency_requirements: None,
             bandwidth_requirements: None,
@@ -315,7 +315,7 @@ impl ZhtpHeaders {
         self
     }
 
-    /// Enable ISP bypass
+    /// Enable 
     pub fn with_isp_bypass(mut self, enable: bool) -> Self {
         self.isp_bypass = Some(enable);
         self
@@ -449,7 +449,7 @@ impl ZhtpHeaders {
         self.dao_fee > 0 && self.dao_fee_proof.is_some()
     }
 
-    /// Check if ISP bypass is enabled
+    /// Check if  is enabled
     pub fn has_isp_bypass(&self) -> bool {
         self.isp_bypass.unwrap_or(false)
     }
@@ -583,7 +583,7 @@ mod tests {
         assert!(headers.has_zero_knowledge_privacy()); // Default privacy level is 100
         assert!(headers.has_post_quantum_crypto()); // Default encryption is Kyber
         assert!(!headers.has_valid_dao_fee()); // No DAO fee set
-        assert!(headers.has_isp_bypass()); // Default ISP bypass is true
+        assert!(headers.has_isp_bypass()); // Default  is true
         
         headers.dao_fee = 50;
         headers.dao_fee_proof = Some([1u8; 32]);

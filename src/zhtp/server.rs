@@ -77,7 +77,7 @@ pub struct ServerStats {
     pub post_quantum_operations: u64,
     /// Mesh routing operations
     pub mesh_operations: u64,
-    /// ISP bypass operations
+    ///  operations
     pub isp_bypass_operations: u64,
 }
 
@@ -128,7 +128,7 @@ impl ServerStats {
         self.mesh_operations += 1;
     }
     
-    /// Record ISP bypass operation
+    /// Record  operation
     pub fn record_isp_bypass_operation(&mut self) {
         self.isp_bypass_operations += 1;
     }

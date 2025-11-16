@@ -113,7 +113,7 @@ pub struct ServerCapabilities {
     pub post_quantum_support: bool,
     /// Mesh networking support
     pub mesh_support: bool,
-    /// ISP bypass capability
+    ///  capability
     pub isp_bypass_support: bool,
     /// DAO fee processing
     pub dao_fee_support: bool,
@@ -194,7 +194,7 @@ pub async fn initialize() -> ZhtpResult<()> {
     tracing::info!("Zero Knowledge Hypertext Transfer Protocol Ready");
     tracing::info!("Post-quantum cryptography enabled");
     tracing::info!("DAO fee system active");
-    tracing::info!("ISP bypass capabilities ready");
+    tracing::info!(" capabilities ready");
     Ok(())
 }
 

@@ -10,7 +10,7 @@
 //! - Post-quantum cryptographic security built-in
 //! - Economic incentives embedded in protocol headers
 //! - Mandatory DAO fees for Universal Basic Income funding
-//! - Quantum-resistant mesh routing with ISP bypass capability
+//! - Quantum-resistant mesh routing with  capability
 //! - Native support for .zhtp domains and Web4 addressing
 //! - Proof-of-Useful-Work consensus for free internet access
 //! 
@@ -41,7 +41,7 @@
 //! - Zero-knowledge proof validation
 //! - Post-quantum cryptography (CRYSTALS-Dilithium, CRYSTALS-Kyber)
 //! - Mandatory 2% DAO fees for UBI funding
-//! - Complete ISP bypass capability
+//! - Complete  capability
 //! 
 //! ### ZDNS v1.0 System
 //! - DNS replacement with ownership proofs
@@ -199,7 +199,7 @@ pub async fn initialize() -> ProtocolResult<()> {
     tracing::info!("Web4 Internet Infrastructure Ready");
     tracing::info!("DAO fee system active for UBI funding");
     tracing::info!("Post-quantum cryptography enabled");
-    tracing::info!("Mesh networking ready for ISP bypass");
+    tracing::info!("Mesh networking ready for ");
     Ok(())
 }
 

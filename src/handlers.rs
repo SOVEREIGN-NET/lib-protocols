@@ -633,7 +633,7 @@ impl ZhtpHandlers {
             processing_cost: 20,
             quality_multiplier: 1.0,
             estimated_time: 1,
-            currency: "ZHTP".to_string(),
+            currency: crate::types::economic::TOKEN_NAME.to_string(),
         };
         
         // Create economic data
@@ -778,7 +778,7 @@ impl ZhtpHandlers {
                 "DAO governance",
                 "UBI integration",
                 "Mesh networking",
-                "ISP bypass capability"
+                " capability"
             ],
             "endpoints": {
                 "api": "/api/v1/",

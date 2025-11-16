@@ -341,7 +341,7 @@ async fn main() -> Result<()> {
         timeout_seconds: 30,
     }).await?;
     
-    println!("✓ Integration initialized");
+    println!(" Integration initialized");
     
     // Create a sample request
     let mut headers = ZhtpHeaders::new();

@@ -271,9 +271,9 @@ pub struct NetworkingConfig {
     pub enable_mesh: bool,
     /// Mesh configuration
     pub mesh: MeshConfig,
-    /// Enable ISP bypass
+    /// Enable 
     pub enable_isp_bypass: bool,
-    /// ISP bypass configuration
+    ///  configuration
     pub isp_bypass: IspBypassConfig,
     /// Enable P2P networking
     pub enable_p2p: bool,
@@ -332,7 +332,7 @@ pub enum LoadBalancingStrategy {
     GeographicProximity,
 }
 
-/// ISP bypass configuration
+///  configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IspBypassConfig {
     /// Enable Tor integration
