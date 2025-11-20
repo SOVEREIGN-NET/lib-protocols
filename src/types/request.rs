@@ -46,15 +46,25 @@ impl ZhtpRequest {
             .duration_since(UNIX_EPOCH)?
             .as_secs();
         
-        // Calculate request value for DAO fee based on method and content
-        let request_value = crate::economics::utils::calculate_request_value(&method, &body, &uri);
-        
-        // Calculate fees using economic model
-        let tx_size = body.len() as u64 + uri.len() as u64;
-        let (network_fee, dao_fee, _total_fees) = economic_model.calculate_fee(tx_size, request_value, priority);
+        // Fee Policy: Getters are FREE (rate-limited), Setters require DAO fee
+        // GET/HEAD: 0 fee (100 requests per 30 seconds enforced by node)
+        // POST/PUT/DELETE/PATCH: Standard DAO fee for UBI funding
+        let (network_fee, dao_fee) = match method {
+            ZhtpMethod::Get | ZhtpMethod::Head => {
+                // Getters are free - rate limiting enforced server-side
+                (0, 0)
+            }
+            _ => {
+                // Setters require fees
+                let request_value = crate::economics::utils::calculate_request_value(&method, &body, &uri);
+                let tx_size = body.len() as u64 + uri.len() as u64;
+                let (net_fee, dao_fee_calc, _total) = economic_model.calculate_fee(tx_size, request_value, priority);
+                (net_fee, dao_fee_calc)
+            }
+        };
         
         // Generate DAO fee proof for UBI funding validation
-        let dao_fee_proof = hash_blake3(&format!("lib_dao_fee_{}_{}", dao_fee, timestamp).as_bytes());
+        let dao_fee_proof = hash_blake3(&format!("dao_fee_{}_{}", dao_fee, timestamp).as_bytes());
         
         // Create headers with Web4 defaults
         let mut headers = ZhtpHeaders::new()

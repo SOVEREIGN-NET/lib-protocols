@@ -328,7 +328,7 @@ impl ZhtpIntegration {
                             meta
                         },
                         private_data_id: None,
-                        wallet_manager: lib_identity::wallets::WalletManager::new(uploader_id),
+                        wallet_manager: lib_identity::wallets::IdentityWallets::new(uploader_id),
                         did_document_hash: None,
                         attestations: vec![],
                         created_at: chrono::Utc::now().timestamp() as u64,
@@ -380,7 +380,7 @@ impl ZhtpIntegration {
                             access_level: session.access_level,
                             metadata: std::collections::HashMap::new(),
                             private_data_id: None,
-                            wallet_manager: lib_identity::wallets::WalletManager::new(identity_id),
+                            wallet_manager: lib_identity::wallets::IdentityWallets::new(identity_id),
                             did_document_hash: None,
                             attestations: vec![],
                             created_at: chrono::Utc::now().timestamp() as u64,

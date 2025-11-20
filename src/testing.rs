@@ -306,7 +306,7 @@ pub mod fixtures {
     /// Create wallet operation test request
     pub fn test_wallet_request() -> ZhtpRequest {
         let mut parameters = std::collections::HashMap::new();
-        parameters.insert("token_type".to_string(), "ZHTP".to_string());
+        parameters.insert("token_type".to_string(), "SOV".to_string());
         parameters.insert("network".to_string(), "mainnet".to_string());
         
         // Create a simple test wallet operation (API types moved to zhtp)

@@ -376,8 +376,8 @@ pub struct AccessController {
     abac_manager: AbacManager,
     /// Geographic resolver
     geo_resolver: GeographicResolver,
-    /// Reputation manager
-    reputation_manager: ReputationManager,
+    /// Access reputation manager
+    reputation_manager: AccessReputationManager,
     /// Access policy cache
     policy_cache: HashMap<String, CachedPolicy>,
 }
@@ -389,9 +389,9 @@ struct GeographicResolver {
     ip_country_cache: HashMap<String, String>,
 }
 
-/// Reputation manager for user reputation scoring
+/// Access-specific reputation manager for user reputation scoring
 #[derive(Debug)]
-struct ReputationManager {
+struct AccessReputationManager {
     /// User reputation scores
     reputation_scores: HashMap<String, ReputationScore>,
 }
@@ -441,7 +441,7 @@ impl AccessController {
             rbac_manager: RbacManager::new(),
             abac_manager: AbacManager::new(),
             geo_resolver: GeographicResolver::new(),
-            reputation_manager: ReputationManager::new(),
+            reputation_manager: AccessReputationManager::new(),
             policy_cache: HashMap::new(),
         }
     }
@@ -899,7 +899,7 @@ impl GeographicResolver {
     }
 }
 
-impl ReputationManager {
+impl AccessReputationManager {
     fn new() -> Self {
         Self {
             reputation_scores: HashMap::new(),

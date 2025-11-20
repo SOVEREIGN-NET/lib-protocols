@@ -803,7 +803,7 @@ mod tests {
             access_level: AccessLevel::FullCitizen,
             metadata: HashMap::new(),
             private_data_id: None,
-            wallet_manager: lib_identity::wallets::WalletManager::new(identity_id),
+            wallet_manager: lib_identity::wallets::IdentityWallets::new(identity_id),
             did_document_hash: None,
             attestations: vec![],
             created_at: current_timestamp(),

@@ -348,8 +348,8 @@ pub struct SessionValidation {
     pub should_renew: bool,
 }
 
-/// Session Manager implementation
-pub struct SessionManager {
+/// ZHTP Protocol Session Manager - Advanced session lifecycle with MFA, ZK proofs, economic incentives
+pub struct ZhtpSessionManager {
     /// Session configuration
     config: SessionConfig,
     /// Active sessions storage
@@ -418,7 +418,7 @@ pub trait AuthProvider: Send + Sync {
     fn requires_mfa(&self, user_id: &str) -> bool;
 }
 
-impl SessionManager {
+impl ZhtpSessionManager {
     /// Create new session manager
     pub fn new(config: SessionConfig) -> Self {
         Self {

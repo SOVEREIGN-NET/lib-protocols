@@ -277,8 +277,8 @@ pub struct EconomicStats {
     pub ubi_contributions: u64,
 }
 
-/// Content Manager implementation
-pub struct ContentManager {
+/// ZHTP Content Manager - Protocol-level content management
+pub struct ZhtpContentManager {
     /// Content configuration
     config: ContentConfig,
     /// Content metadata storage
@@ -299,7 +299,7 @@ pub struct ContentManager {
     dedup_hashes: HashMap<String, String>, // hash -> content_id
 }
 
-impl ContentManager {
+impl ZhtpContentManager {
     /// Create new content manager
     pub fn new(config: ContentConfig) -> Self {
         Self {
@@ -830,7 +830,7 @@ mod tests {
         use std::time::{SystemTime, UNIX_EPOCH};
         
         let config = ContentConfig::default();
-        let mut manager = ContentManager::new(config);
+        let mut manager = ZhtpContentManager::new(config);
         
         let content = b"Hello, ZHTP Content Management!";
         let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
@@ -887,7 +887,7 @@ mod tests {
     #[test]
     fn test_content_hash() {
         let config = ContentConfig::default();
-        let manager = ContentManager::new(config);
+        let manager = ZhtpContentManager::new(config);
         
         let content1 = b"test content";
         let content2 = b"test content";
@@ -907,7 +907,7 @@ mod tests {
             backend: StorageBackend::FileSystem(PathBuf::from("/data")),
             ..ContentConfig::default()
         };
-        let manager = ContentManager::new(config);
+        let manager = ZhtpContentManager::new(config);
         
         let location = manager.generate_storage_location("test-content-id");
         assert!(location.starts_with("/data/"));
@@ -920,7 +920,7 @@ mod tests {
         use std::time::{SystemTime, UNIX_EPOCH};
         
         let config = ContentConfig::default();
-        let manager = ContentManager::new(config);
+        let manager = ZhtpContentManager::new(config);
         
         const CONTENT_SIZE: usize = 1024; // 1KB
         let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();

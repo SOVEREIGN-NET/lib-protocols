@@ -17,8 +17,8 @@ pub use server::{ZhtpServer, ServerState};
 pub use config::ServerConfig;
 pub use access_control::AccessController;
 pub use routing::{Router, Route, RouteHandler};
-pub use content::{ContentManager, ContentConfig, StorageBackend, CompressionType, EncryptionType};
-pub use session::{SessionManager, SessionConfig, SessionInfo, AuthMethod, SecurityLevel};
+pub use content::{ZhtpContentManager, ContentConfig, StorageBackend, CompressionType, EncryptionType};
+pub use session::{ZhtpSessionManager, SessionConfig, SessionInfo, AuthMethod, SecurityLevel};
 
 use crate::types::{ZhtpRequest, ZhtpResponse, ZhtpStatus};
 
